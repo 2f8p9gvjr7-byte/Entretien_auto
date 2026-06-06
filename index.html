@@ -124,7 +124,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .bsave:active{opacity:.8}
 .bcancel{padding:9px 14px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--tm);font-family:var(--f);font-size:13px;cursor:pointer;min-height:40px}
 
-/* ECHEANCES */
+/* INLINE TABLE INPUTS */
+.ti{border:none;border-radius:4px;background:transparent;font-family:var(--f);font-size:12px;font-weight:500;color:var(--t);padding:2px 4px;margin:-2px -4px;outline:none;width:100%;min-width:60px;min-height:28px;cursor:text}
+.ti::placeholder{color:var(--tf)}
+.ti:focus{background:rgba(255,255,255,0.08);border-radius:4px}
+.mono-ti{font-family:var(--m);font-size:11px}
+.ti-sel{border:none;border-radius:6px;background:var(--obg);border:1px solid var(--ob);font-family:var(--f);font-size:11px;font-weight:600;color:var(--o);padding:3px 6px;outline:none;cursor:pointer;min-height:28px;max-width:160px}
+.ti-sel option{background:var(--card2);color:var(--t)}
+.ech-inp{border:none;border-bottom:1px solid rgba(255,255,255,0.15);background:transparent;font-family:var(--f);font-size:13px;font-weight:700;color:inherit;padding:2px 0;outline:none;width:100%;min-height:26px}
+.ech-inp::placeholder{color:inherit;opacity:.4;font-weight:400}
+.ech-inp:focus{border-bottom-color:currentColor}
+.ech-inp.mono-ti{font-family:var(--m);font-size:11px;font-weight:400}
 .echl{padding:10px 14px;display:flex;flex-direction:column;gap:7px}
 .ech{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;font-size:13px;border:1px solid transparent;flex-wrap:wrap}
 .ech.ok{background:var(--gbg);border-color:var(--gb);color:var(--g)}
@@ -344,26 +354,33 @@ function renderDyn(){
   const ctExp=v.ct_valid&&new Date(v.ct_valid)<new Date();
   const ctC=!v.ct_valid?'':ctExp?'ct-ko':'ct-ok';
 
+  // trouve l'index réel dans VH[cur].entretiens depuis l'index trié
+  function realIdx(si){ return VH[cur].entretiens.indexOf(sorted[si]); }
+
   const rows=sorted.length===0
     ?`<tr><td colspan="8" class="empty">Aucune intervention enregistrée.</td></tr>`
-    :sorted.map((e,i)=>`<tr>
-      <td class="mt">${fd(e.date)}</td>
-      <td class="mt">${e.km?fk(e.km)+' km':'—'}</td>
-      <td><span class="pill">${e.type}</span></td>
-      <td class="mut">${e.garage||'—'}</td>
-      <td class="mt">${e.cout?parseFloat(e.cout).toFixed(0)+' €':'—'}</td>
-      <td class="mt mut" style="font-size:10px">${e.facture||'—'}</td>
-      <td class="mut" style="font-size:11px">${e.notes||''}</td>
-      <td><button class="bdel" onclick="delE(${i})">✕</button></td>
+    :sorted.map((e,si)=>`<tr>
+      <td><input class="ti" type="date" value="${e.date||''}" onchange="updE(${si},'date',this.value)"></td>
+      <td><input class="ti mono-ti" type="text" value="${e.km||''}" placeholder="km" style="width:72px" oninput="updE(${si},'km',this.value)"></td>
+      <td><select class="ti-sel" onchange="updE(${si},'type',this.value)">${TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></td>
+      <td><input class="ti" type="text" value="${(e.garage||'').replace(/"/g,'&quot;')}" placeholder="Garage" oninput="updE(${si},'garage',this.value)"></td>
+      <td><input class="ti mono-ti" type="text" value="${e.cout||''}" placeholder="€" style="width:58px" oninput="updE(${si},'cout',this.value)"></td>
+      <td><input class="ti mono-ti" type="text" value="${(e.facture||'').replace(/"/g,'&quot;')}" placeholder="N° fact." style="width:80px" oninput="updE(${si},'facture',this.value)"></td>
+      <td><input class="ti" type="text" value="${(e.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="updE(${si},'notes',this.value)"></td>
+      <td><button class="bdel" onclick="delE(${si})">✕</button></td>
     </tr>`).join('');
 
   const echs=v.prochains.length===0
     ?`<p class="empty">Aucune échéance planifiée.</p>`
     :v.prochains.map((p,i)=>`
       <div class="ech ${p.prio}">
-        <b>${p.type}</b>
-        ${p.km?`<span class="ed">à ${fk(p.km)} km</span>`:''}
-        ${p.date?`<span class="ed">${p.date}</span>`:''}
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <input class="ech-inp" type="text" value="${(p.type||'').replace(/"/g,'&quot;')}" placeholder="Type d'intervention" oninput="updP(${i},'type',this.value)">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input class="ech-inp mono-ti" type="text" value="${p.km||''}" placeholder="km prévu" style="width:90px" oninput="updP(${i},'km',this.value)">
+            <input class="ech-inp mono-ti" type="text" value="${p.date||''}" placeholder="2026-06" style="width:80px" oninput="updP(${i},'date',this.value)">
+          </div>
+        </div>
         <select class="esel" onchange="setPrio(${i},this.value)">
           <option value="ok"${p.prio==='ok'?' selected':''}>✓ OK</option>
           <option value="soon"${p.prio==='soon'?' selected':''}>⏳ Bientôt</option>
@@ -452,10 +469,10 @@ function saveE(){
   adding=false; saveData(); renderDyn();
 }
 
-function delE(i){
+function delE(si){
   if(!confirm('Supprimer cette intervention ?')) return;
   const s=[...VH[cur].entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const ri=VH[cur].entretiens.indexOf(s[i]);
+  const ri=VH[cur].entretiens.indexOf(s[si]);
   VH[cur].entretiens.splice(ri,1); saveData(); renderDyn();
 }
 
@@ -464,6 +481,18 @@ function addP(){
   const km=prompt("Kilométrage prévu (vide si N/A) :")||'';
   const date=prompt("Date prévue (ex: 2026-08) :")||'';
   VH[cur].prochains.push({type,km,date,prio:'ok'}); saveData(); renderDyn();
+}
+
+function updE(si, field, val){
+  // si = index dans le tableau trié, on retrouve l'entrée réelle
+  const sorted=[...VH[cur].entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const entry=sorted[si];
+  const ri=VH[cur].entretiens.indexOf(entry);
+  if(ri>=0){ VH[cur].entretiens[ri][field]=val; saveData(); }
+}
+
+function updP(i, field, val){
+  VH[cur].prochains[i][field]=val; saveData();
 }
 
 function setPrio(i,val){ VH[cur].prochains[i].prio=val; saveData(); renderDyn(); }
