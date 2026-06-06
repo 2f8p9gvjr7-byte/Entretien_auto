@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carnet d'entretien — Flotte véhicules</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #141d33;
+    --bg2:       #1a2340;
+    --card:      #1e2a4a;
+    --card2:     #243054;
+    --border:    rgba(255,255,255,0.08);
+    --border2:   rgba(255,255,255,0.15);
+    --text:      #e8eaf0;
+    --text-muted:#8b93b0;
+    --text-faint:#4e567a;
+    --orange:    #F5A623;
+    --orange-bg: rgba(245,166,35,0.12);
+    --orange-border: rgba(245,166,35,0.4);
+    --green:     #2ecc71;
+    --green-bg:  rgba(46,204,113,0.12);
+    --green-border: rgba(46,204,113,0.35);
+    --yellow:    #f1c40f;
+    --red:       #e74c3c;
+    --red-bg:    rgba(231,76,60,0.12);
+    --red-border:rgba(231,76,60,0.4);
+    --v1: #4a9fd4; --v2: #5db87a; --v3: #e07b4a; --v4: #c97fd4;
+    --font: 'Syne', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--orange);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header .logo {
+    width: 36px; height: 36px;
+    background: var(--orange);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .app-header .logo svg { color: var(--bg2); }
+  .app-header h1 {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--orange);
+  }
+  .app-header .subtitle {
+    font-size: 11px; color: var(--text-muted);
+    margin-left: auto; font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── TABS ── */
+  .vehicle-tabs {
+    background: var(--bg2);
+    display: flex;
+    overflow-x: auto;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .vtab {
+    display: flex; align-items: center; gap: 9px;
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .vtab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .vtab.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .vtab-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .vtab-immat { font-family: var(--mono); font-size: 11px; opacity: 0.5; }
+
+  /* ── MAIN ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 28px 32px; }
+
+  /* ── IDENTITY CARD ── */
+  .identity-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .identity-header {
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card2);
+  }
+  .identity-header .vh-stripe {
+    width: 4px; height: 34px; border-radius: 2px; flex-shrink: 0;
+  }
+  .identity-header h2 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .identity-header .immat-plate {
+    margin-left: auto;
+    background: var(--bg);
+    border: 1px solid var(--orange-border);
+    border-radius: 7px;
+    padding: 5px 16px;
+    font-family: var(--mono);
+    font-size: 14px; font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+  }
+
+  .identity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .id-field {
+    padding: 13px 18px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .id-field:nth-child(4n) { border-right: none; }
+  .id-field:nth-last-child(-n+4) { border-bottom: none; }
+  .id-field label {
+    display: block;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 5px;
+  }
+  .id-field input, .id-field select {
+    width: 100%; border: none; background: transparent;
+    font-family: var(--font); font-size: 13px; font-weight: 500;
+    color: var(--text); outline: none; padding: 0;
+  }
+  .id-field input::placeholder { color: var(--text-faint); font-weight: 400; }
+  .id-field input:focus, .id-field select:focus {
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px; padding: 2px 5px; margin: -2px -5px;
+  }
+  .id-field select { cursor: pointer; }
+  .id-field select option { background: var(--card2); color: var(--text); }
+  .id-field.mono input, .id-field.mono select { font-family: var(--mono); font-size: 12px; }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .stat-card .s-label {
+    font-size: 9px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-faint); margin-bottom: 8px;
+  }
+  .stat-card .s-value {
+    font-size: 24px; font-weight: 700; color: var(--orange); line-height: 1;
+  }
+  .stat-card .s-unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+  .stat-card .s-sub { font-size: 11px; color: var(--text-faint); margin-top: 5px; font-family: var(--mono); }
+
+  /* ── SECTION ── */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .section-head {
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card2);
+  }
+  .section-head h3 {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--orange);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-add {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: 1px solid var(--orange-border);
+    background: var(--orange-bg);
+    font-family: var(--font);
+    font-size: 12px; font-weight: 600;
+    color: var(--orange);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .btn-add:hover { background: var(--orange); color: var(--bg2); }
+
+  /* ── TABLE ── */
+  .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .hist-table th {
+    text-align: left; padding: 10px 16px;
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--border);
+    background: var(--card2);
+  }
+  .hist-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: middle;
+  }
+  .hist-table tr:last-child td { border-bottom: none; }
+  .hist-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+  .hist-table td.mono { font-family: var(--mono); font-size: 12px; }
+  .hist-table td.muted { color: var(--text-muted); }
+
+  .type-pill {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 999px; font-size: 11px; font-weight: 600;
+    background: var(--orange-bg); border: 1px solid var(--orange-border);
+    color: var(--orange);
+  }
+  .btn-del {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-faint); padding: 4px 7px; border-radius: 5px;
+    font-size: 13px; line-height: 1; transition: all 0.1s;
+  }
+  .btn-del:hover { color: var(--red); background: var(--red-bg); }
+
+  /* ── ADD FORM ── */
+  .add-form {
+    display: none; padding: 20px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .add-form.open { display: block; }
+  .form-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 12px; }
+  .form-grid-full { margin-bottom: 12px; }
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field label {
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-faint);
+  }
+  .form-field input, .form-field select, .form-field textarea {
+    border: 1px solid var(--border2);
+    border-radius: 7px; padding: 8px 11px;
+    font-family: var(--font); font-size: 13px;
+    background: var(--card); color: var(--text);
+    outline: none; transition: border-color 0.12s;
+  }
+  .form-field input::placeholder, .form-field textarea::placeholder { color: var(--text-faint); }
+  .form-field select option { background: var(--card2); }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+    border-color: var(--orange);
+  }
+  .form-field textarea { resize: vertical; min-height: 64px; width: 100%; }
+  .form-actions { display: flex; gap: 8px; }
+  .btn-save {
+    padding: 8px 22px; border-radius: 7px;
+    border: none; background: var(--orange);
+    color: var(--bg2); font-family: var(--font);
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.12s;
+  }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-cancel {
+    padding: 8px 16px; border-radius: 7px;
+    border: 1px solid var(--border2); background: transparent;
+    color: var(--text-muted); font-family: var(--font);
+    font-size: 13px; cursor: pointer;
+  }
+  .btn-cancel:hover { background: rgba(255,255,255,0.05); }
+
+  /* ── ÉCHÉANCES ── */
+  .echeances-list { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .ech-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 15px; border-radius: 9px;
+    font-size: 13px; border: 1px solid transparent;
+  }
+  .ech-ok     { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green); }
+  .ech-soon   { background: var(--orange-bg); border-color: var(--orange-border); color: var(--orange); }
+  .ech-urgent { background: var(--red-bg);    border-color: var(--red-border);    color: var(--red); }
+  .ech-label { font-weight: 700; flex: 1; }
+  .ech-detail { font-size: 12px; opacity: 0.75; font-family: var(--mono); }
+  .ech-select {
+    border: 1px solid currentColor; border-radius: 5px;
+    padding: 3px 7px; font-size: 11px; font-weight: 600;
+    font-family: var(--font); background: transparent;
+    color: inherit; cursor: pointer; opacity: 0.8;
+  }
+  .ech-select option { background: var(--card2); color: var(--text); }
+
+  /* ── NOTES ── */
+  .notes-area { padding: 16px 20px; }
+  .notes-area textarea {
+    width: 100%;
+    border: 1px solid var(--border2);
+    border-radius: 9px; padding: 12px 14px;
+    font-family: var(--font); font-size: 13px;
+    background: var(--bg2); color: var(--text);
+    outline: none; resize: vertical; min-height: 80px;
+    transition: border-color 0.12s;
+  }
+  .notes-area textarea::placeholder { color: var(--text-faint); }
+  .notes-area textarea:focus { border-color: var(--orange); }
+
+  .empty-msg {
+    padding: 22px; text-align: center;
+    font-size: 13px; color: var(--text-faint);
+  }
+
+  /* ── CT WARNING ── */
+  .ct-expired { color: var(--red) !important; }
+  .ct-ok { color: var(--green) !important; }
+
+  @media print {
+    .app-header { position: static; }
+    .btn-add, .btn-del, .btn-save, .btn-cancel, .ech-select { display:none; }
+    .add-form { display:none !important; }
+    body { background: white; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2340" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/>
+    </svg>
+  </div>
+  <h1>Carnet d'entretien</h1>
+  <span class="subtitle">Flotte · 4 véhicules</span>
+</div>
+
+<div class="vehicle-tabs" id="vtabs"></div>
+<div class="main" id="main-content"></div>
+
+<script>
+const COLORS = ['#4a9fd4','#5db87a','#e07b4a','#c97fd4'];
+
+const TYPES_INTERVENTION = [
+  "Vidange huile","Révision générale","Contrôle technique","Remplacement pneus",
+  "Freins (plaquettes)","Freins (disques + plaquettes)","Courroie de distribution",
+  "Remplacement filtres","Batterie","Climatisation","Liquide de refroidissement",
+  "Boîte de vitesse","Embrayage","Amortisseurs","Géométrie / parallélisme",
+  "Éclairage","Pare-brise","Carrosserie","Autre"
+];
+const CARBURANTS = ["Essence","Diesel","Hybride essence","Hybride diesel","Électrique","GPL","GNV"];
+const BOITES     = ["Manuelle","Automatique","Séquentielle","CVT"];
+const COULEURS   = ["Blanc","Noir","Gris","Argent","Bleu","Rouge","Vert","Beige","Orange","Marron","Autre"];
+
+const vehicles = [
+  {
+    designation:"Peugeot 308 SW", immat:"AB-123-CD", date_mec:"2019-04-15", km:"87500",
+    vin:"VF3LCBHZHJS123456", puissance_fiscale:"7", puissance_din:"130", cylindree:"1499",
+    nb_places:"5", carburant:"Diesel", boite:"Manuelle", couleur:"Gris",
+    marque:"Peugeot", modele:"308 SW", version:"1.5 BlueHDi 130",
+    genre:"VP", ptac:"1800", proprietaire:"Société Dupont SAS",
+    assurance_fin:"2026-12-31", ct_date:"2025-11-15", ct_validite:"2027-11-15", notes:"",
+    entretiens:[
+      {date:"2024-09-12",km:"82000",type:"Vidange huile",garage:"Peugeot SA Metz",cout:"185",facture:"F-2024-089",notes:"Huile 5W40 Total"},
+      {date:"2024-03-05",km:"76000",type:"Remplacement pneus",garage:"Speedy Metz",cout:"460",facture:"F-2024-021",notes:"4 pneus Michelin Primacy 4"}
+    ],
+    prochains:[
+      {type:"Courroie de distribution",km_prevu:"100000",date_prevu:"2025-06",prio:"urgent"},
+      {type:"Révision générale",km_prevu:"90000",date_prevu:"2025-09",prio:"soon"}
+    ]
+  },
+  {
+    designation:"Renault Clio V", immat:"EF-456-GH", date_mec:"2021-02-08", km:"42300",
+    vin:"VF1RJA00065234567", puissance_fiscale:"6", puissance_din:"100", cylindree:"999",
+    nb_places:"5", carburant:"Essence", boite:"Manuelle", couleur:"Blanc",
+    marque:"Renault", modele:"Clio V", version:"1.0 TCe 100",
+    genre:"VP", ptac:"1490", proprietaire:"Société Dupont SAS",
+    assurance_fin:"2026-06-30", ct_date:"", ct_validite:"2027-03-20", notes:"",
+    entretiens:[
+      {date:"2024-11-20",km:"40000",type:"Révision générale",garage:"Renault Metz",cout:"320",facture:"F-2024-112",notes:"Révision 40 000 km"}
+    ],
+    prochains:[
+      {type:"Vidange huile",km_prevu:"50000",date_prevu:"2025-12",prio:"ok"}
+    ]
+  },
+  {
+    designation:"Volkswagen Golf VIII", immat:"IJ-789-KL", date_mec:"2018-07-22", km:"118000",
+    vin:"WVWZZZ1KZ9M345678", puissance_fiscale:"9", puissance_din:"150", cylindree:"1968",
+    nb_places:"5", carburant:"Diesel", boite:"Automatique", couleur:"Noir",
+    marque:"Volkswagen", modele:"Golf VIII", version:"2.0 TDI 150 DSG",
+    genre:"VP", ptac:"1900", proprietaire:"Société Dupont SAS",
+    assurance_fin:"2026-09-15", ct_date:"2024-08-10", ct_validite:"2026-08-10", notes:"Véhicule de direction",
+    entretiens:[
+      {date:"2024-07-15",km:"112000",type:"Freins (disques + plaquettes)",garage:"Midas Metz",cout:"380",facture:"F-2024-071",notes:"Disques + plaquettes AV"},
+      {date:"2024-01-22",km:"104000",type:"Vidange huile",garage:"Midas Metz",cout:"175",facture:"F-2024-008",notes:"Huile 5W30 Longlife"},
+      {date:"2023-06-10",km:"96000",type:"Contrôle technique",garage:"Autovision Metz",cout:"80",facture:"F-2023-058",notes:"Contre-visite effectuée"}
+    ],
+    prochains:[
+      {type:"Contrôle technique",km_prevu:"",date_prevu:"2026-08",prio:"urgent"},
+      {type:"Remplacement pneus",km_prevu:"120000",date_prevu:"2025-06",prio:"soon"}
+    ]
+  },
+  {
+    designation:"Toyota Yaris Hybrid", immat:"MN-012-OP", date_mec:"2022-04-10", km:"28900",
+    vin:"VNKKD3D3XPA456789", puissance_fiscale:"5", puissance_din:"116", cylindree:"1490",
+    nb_places:"5", carburant:"Hybride essence", boite:"CVT", couleur:"Bleu",
+    marque:"Toyota", modele:"Yaris", version:"Hybride 116h GR Sport",
+    genre:"VP", ptac:"1440", proprietaire:"Société Dupont SAS",
+    assurance_fin:"2026-11-30", ct_date:"", ct_validite:"2028-04-10", notes:"",
+    entretiens:[
+      {date:"2024-10-05",km:"25000",type:"Révision générale",garage:"Toyota Metz",cout:"290",facture:"F-2024-098",notes:"Révision 25 000 km"}
+    ],
+    prochains:[
+      {type:"Révision générale",km_prevu:"40000",date_prevu:"2026-06",prio:"ok"}
+    ]
+  }
+];
+
+let cur = 0, addingEntry = false;
+
+function fmtDate(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function totalCouts(v) { return v.entretiens.reduce((s,e)=>s+(parseFloat(e.cout)||0),0); }
+
+function renderTabs() {
+  document.getElementById('vtabs').innerHTML = vehicles.map((v,i)=>`
+    <div class="vtab${cur===i?' active':''}" onclick="switchV(${i})">
+      <span class="vtab-dot" style="background:${COLORS[i]}"></span>
+      <span>${v.designation||'Véhicule '+(i+1)}</span>
+      <span class="vtab-immat">${v.immat||'—'}</span>
+    </div>`).join('');
+}
+
+function switchV(i) { cur=i; addingEntry=false; renderTabs(); renderMain(); }
+
+function ifield(label, key, val, type='text', mono=false, opts=null, ph='') {
+  const idx = cur;
+  if (opts) return `<div class="id-field${mono?' mono':''}">
+    <label>${label}</label>
+    <select onchange="vehicles[${idx}]['${key}']=this.value${key==='designation'||key==='immat'?';renderTabs()':''}" >
+      ${opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')}
+    </select></div>`;
+  return `<div class="id-field${mono?' mono':''}">
+    <label>${label}</label>
+    <input type="${type}" value="${val||''}" placeholder="${ph}"
+      oninput="vehicles[${idx}]['${key}']=this.value${key==='designation'||key==='immat'?';renderTabs()':''}">
+  </div>`;
+}
+
+function renderMain() {
+  const v = vehicles[cur];
+  const total = totalCouts(v);
+  const sorted = [...v.entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const dernier = sorted[0] || null;
+
+  const ctExpired = v.ct_validite && new Date(v.ct_validite) < new Date();
+  const ctClass   = !v.ct_validite ? '' : ctExpired ? 'ct-expired' : 'ct-ok';
+
+  const histRows = sorted.length === 0
+    ? `<tr><td colspan="8" class="empty-msg">Aucune intervention enregistrée.</td></tr>`
+    : sorted.map((e,i)=>`<tr>
+        <td class="mono">${fmtDate(e.date)}</td>
+        <td class="mono">${e.km?parseInt(e.km).toLocaleString('fr-FR')+' km':'—'}</td>
+        <td><span class="type-pill">${e.type}</span></td>
+        <td class="muted">${e.garage||'—'}</td>
+        <td class="mono">${e.cout?parseFloat(e.cout).toFixed(0)+' €':'—'}</td>
+        <td class="mono muted" style="font-size:11px">${e.facture||'—'}</td>
+        <td class="muted">${e.notes||''}</td>
+        <td><button class="btn-del" onclick="delEntry(${i})">✕</button></td>
+      </tr>`).join('');
+
+  const echRows = v.prochains.length === 0
+    ? `<p class="empty-msg">Aucune échéance planifiée.</p>`
+    : v.prochains.map((p,i)=>`
+      <div class="ech-row ech-${p.prio}">
+        <span class="ech-label">${p.type}</span>
+        ${p.km_prevu?`<span class="ech-detail">à ${parseInt(p.km_prevu).toLocaleString('fr-FR')} km</span>`:''}
+        ${p.date_prevu?`<span class="ech-detail">${p.date_prevu}</span>`:''}
+        <select class="ech-select" onchange="vehicles[${cur}].prochains[${i}].prio=this.value;renderMain()">
+          <option value="ok"${p.prio==='ok'?' selected':''}>✓ OK</option>
+          <option value="soon"${p.prio==='soon'?' selected':''}>⏳ Bientôt</option>
+          <option value="urgent"${p.prio==='urgent'?' selected':''}>⚠ Urgent</option>
+        </select>
+        <button class="btn-del" onclick="delEch(${i})">✕</button>
+      </div>`).join('');
+
+  document.getElementById('main-content').innerHTML = `
+    <!-- IDENTITÉ -->
+    <div class="identity-card">
+      <div class="identity-header">
+        <div class="vh-stripe" style="background:${COLORS[cur]}"></div>
+        <h2>${v.designation||'Véhicule '+(cur+1)}</h2>
+        <span class="immat-plate">${v.immat||'—'}</span>
+      </div>
+      <div class="identity-grid">
+        ${ifield('Désignation complète','designation',v.designation,'text',false,null,'ex: Peugeot 308 SW')}
+        ${ifield('Immatriculation','immat',v.immat,'text',true,null,'AB-123-CD')}
+        ${ifield('1ère mise en circulation','date_mec',v.date_mec,'date')}
+        ${ifield('Kilométrage actuel','km',v.km,'text',true,null,'ex: 87500')}
+        ${ifield('N° de série VIN / NIV','vin',v.vin,'text',true,null,'17 caractères')}
+        ${ifield('Puissance fiscale (CV)','puissance_fiscale',v.puissance_fiscale,'text',true,null,'ex: 7')}
+        ${ifield('Puissance DIN (ch)','puissance_din',v.puissance_din,'text',true,null,'ex: 130')}
+        ${ifield('Cylindrée (cm³)','cylindree',v.cylindree,'text',true,null,'ex: 1499')}
+        ${ifield('Marque','marque',v.marque,'text',false,null,'ex: Peugeot')}
+        ${ifield('Modèle','modele',v.modele,'text',false,null,'ex: 308')}
+        ${ifield('Version / finition','version',v.version,'text',false,null,'ex: 1.5 BlueHDi')}
+        ${ifield('Genre','genre',v.genre,'text',false,null,'VP / VU / CTTE')}
+        ${ifield('Carburant','carburant',v.carburant,'text',false,CARBURANTS)}
+        ${ifield('Boîte de vitesse','boite',v.boite,'text',false,BOITES)}
+        ${ifield('Couleur','couleur',v.couleur,'text',false,COULEURS)}
+        ${ifield('Nb de places','nb_places',v.nb_places,'text',true,null,'5')}
+        ${ifield('PTAC (kg)','ptac',v.ptac,'text',true,null,'ex: 1800')}
+        ${ifield('Propriétaire / Titulaire','proprietaire',v.proprietaire,'text',false,null,'Nom ou société')}
+        ${ifield('Assurance — échéance','assurance_fin',v.assurance_fin,'date')}
+        ${ifield('Date du dernier CT','ct_date',v.ct_date,'date')}
+        ${ifield('CT valable jusqu\'au','ct_validite',v.ct_validite,'date')}
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="s-label">Kilométrage</div>
+        <div class="s-value">${v.km?parseInt(v.km).toLocaleString('fr-FR'):'—'}<span class="s-unit">km</span></div>
+        <div class="s-sub">${dernier?'Dernier: '+fmtDate(dernier.date):'Aucune intervention'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Interventions</div>
+        <div class="s-value">${v.entretiens.length}</div>
+        <div class="s-sub">enregistrées</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Dépenses totales</div>
+        <div class="s-value">${Math.round(total).toLocaleString('fr-FR')}<span class="s-unit">€</span></div>
+        <div class="s-sub">toutes interventions</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">CT valable jusqu'au</div>
+        <div class="s-value ${ctClass}" style="font-size:15px;margin-top:4px">${v.ct_validite?fmtDate(v.ct_validite):'—'}</div>
+        <div class="s-sub">${ctExpired?'⚠ Dépassé':v.ct_validite?'✓ Valide':''}</div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="section">
+      <div class="section-head">
+        <h3>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Historique des interventions
+        </h3>
+        <button class="btn-add" onclick="toggleAdd()">+ Ajouter</button>
+      </div>
+      <table class="hist-table">
+        <thead><tr>
+          <th>Date</th><th>Kilométrage</th><th>Type d'intervention</th>
+          <th>Garage / Prestataire</th><th>Coût</th><th>N° facture</th><th>Notes</th><th></th>
+        </tr></thead>
+        <tbody>${histRows}</tbody>
+      </table>
+      <div class="add-form${addingEntry?' open':''}" id="add-form">
+        <div class="form-grid">
+          <div class="form-field"><label>Date</label><input type="date" id="f-date" value="${new Date().toISOString().split('T')[0]}"></div>
+          <div class="form-field"><label>Kilométrage</label><input id="f-km" placeholder="ex: 88000"></div>
+          <div class="form-field"><label>Coût (€)</label><input id="f-cout" placeholder="ex: 250"></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><label>Type d'intervention</label>
+            <select id="f-type">${TYPES_INTERVENTION.map(t=>`<option>${t}</option>`).join('')}</select>
+          </div>
+          <div class="form-field"><label>Garage / Prestataire</label><input id="f-garage" placeholder="Nom du garage"></div>
+          <div class="form-field"><label>N° de facture</label><input id="f-facture" placeholder="ex: F-2025-001"></div>
+        </div>
+        <div class="form-grid-full">
+          <div class="form-field"><label>Notes / observations</label>
+            <textarea id="f-notes" placeholder="Pièces remplacées, références, observations..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="saveEntry()">Enregistrer</button>
+          <button class="btn-cancel" onclick="toggleAdd()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÉCHÉANCES -->
+    <div class="section">
+      <div class="section-head">
+        <h3>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Prochaines échéances
+        </h3>
+        <button class="btn-add" onclick="addEch()">+ Ajouter</button>
+      </div>
+      <div class="echeances-list">${echRows}</div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="section">
+      <div class="section-head">
+        <h3>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Notes générales
+        </h3>
+      </div>
+      <div class="notes-area">
+        <textarea placeholder="Observations générales, historique propriétaires, accidents, modifications..."
+          oninput="vehicles[${cur}].notes=this.value">${v.notes||''}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function toggleAdd() {
+  addingEntry = !addingEntry; renderMain();
+  if (addingEntry) setTimeout(()=>document.getElementById('add-form').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+function saveEntry() {
+  const date=document.getElementById('f-date').value;
+  if (!date) return;
+  vehicles[cur].entretiens.push({
+    date, km:document.getElementById('f-km').value,
+    type:document.getElementById('f-type').value,
+    garage:document.getElementById('f-garage').value,
+    cout:document.getElementById('f-cout').value,
+    facture:document.getElementById('f-facture').value,
+    notes:document.getElementById('f-notes').value
+  });
+  addingEntry=false; renderMain();
+}
+function delEntry(idx) {
+  if (!confirm('Supprimer cette intervention ?')) return;
+  const sorted=[...vehicles[cur].entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const entry=sorted[idx];
+  const ri=vehicles[cur].entretiens.indexOf(entry);
+  vehicles[cur].entretiens.splice(ri,1); renderMain();
+}
+function addEch() {
+  const type=prompt("Type d'intervention :"); if(!type) return;
+  const km_prevu=prompt("Kilométrage prévu (vide si N/A) :")||"";
+  const date_prevu=prompt("Date prévue (ex: 2026-08) :")||"";
+  vehicles[cur].prochains.push({type,km_prevu,date_prevu,prio:'ok'}); renderMain();
+}
+function delEch(idx) { vehicles[cur].prochains.splice(idx,1); renderMain(); }
+
+renderTabs(); renderMain();
+</script>
+</body>
+</html>
