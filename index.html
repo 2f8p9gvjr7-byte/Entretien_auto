@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -455,17 +456,30 @@ function renderTabs() {
 
 function switchV(i) { cur=i; addingEntry=false; renderTabs(); renderMain(); }
 
+function updateTabLabel(i) {
+  const tabs = document.querySelectorAll('.vtab');
+  if (!tabs[i]) return;
+  const v = vehicles[i];
+  const dot = tabs[i].querySelector('.vtab-dot');
+  const immatEl = tabs[i].querySelector('.vtab-immat');
+  // update text node (the middle span)
+  const spans = tabs[i].querySelectorAll('span');
+  if (spans[1]) spans[1].textContent = v.designation || 'Véhicule '+(i+1);
+  if (immatEl)  immatEl.textContent  = v.immat || '—';
+}
+
 function ifield(label, key, val, type='text', mono=false, opts=null, ph='') {
   const idx = cur;
+  const tabCb = (key==='designation'||key==='immat') ? `;updateTabLabel(${idx})` : '';
   if (opts) return `<div class="id-field${mono?' mono':''}">
     <label>${label}</label>
-    <select onchange="vehicles[${idx}]['${key}']=this.value${key==='designation'||key==='immat'?';renderTabs()':''}" >
+    <select onchange="vehicles[${idx}]['${key}']=this.value${tabCb}">
       ${opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')}
     </select></div>`;
   return `<div class="id-field${mono?' mono':''}">
     <label>${label}</label>
     <input type="${type}" value="${val||''}" placeholder="${ph}"
-      oninput="vehicles[${idx}]['${key}']=this.value${key==='designation'||key==='immat'?';renderTabs()':''}">
+      oninput="vehicles[${idx}]['${key}']=this.value${tabCb}">
   </div>`;
 }
 
