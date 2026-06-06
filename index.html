@@ -119,6 +119,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .ff select option{background:var(--card2)}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--o)}
 .ff textarea{resize:vertical;min-height:58px}
+.ff-autre{border:1px solid var(--ob);border-radius:7px;padding:7px 10px;font-family:var(--f);font-size:13px;background:var(--card);color:var(--t);outline:none;width:100%;transition:border-color .12s}
+.ff-autre::placeholder{color:var(--tf)}
+.ff-autre:focus{border-color:var(--o)}
 .fac{display:flex;gap:8px;margin-top:10px}
 .bsave{padding:9px 20px;border-radius:7px;border:none;background:var(--o);color:var(--bg2);font-family:var(--f);font-size:13px;font-weight:700;cursor:pointer;min-height:40px;-webkit-tap-highlight-color:transparent}
 .bsave:active{opacity:.8}
@@ -362,7 +365,10 @@ function renderDyn(){
     :sorted.map((e,si)=>`<tr>
       <td><input class="ti" type="date" value="${e.date||''}" onchange="updE(${si},'date',this.value)"></td>
       <td><input class="ti mono-ti" type="text" value="${e.km||''}" placeholder="km" style="width:72px" oninput="updE(${si},'km',this.value)"></td>
-      <td><select class="ti-sel" onchange="updE(${si},'type',this.value)">${TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></td>
+      <td style="white-space:nowrap">
+        <select class="ti-sel" onchange="onTypeChgE(this,${si})">${TYPES.map(t=>`<option${(TYPES.slice(0,-1).includes(e.type)?e.type===t:t==='Autre')?' selected':''}>${t}</option>`).join('')}</select>
+        <input class="ti" type="text" placeholder="Préciser…" style="display:${TYPES.slice(0,-1).includes(e.type)?'none':'inline'};width:100px;font-size:11px;margin-left:4px" value="${TYPES.slice(0,-1).includes(e.type)?'':e.type}" oninput="updE(${si},'type',this.value)">
+      </td>
       <td><input class="ti" type="text" value="${(e.garage||'').replace(/"/g,'&quot;')}" placeholder="Garage" oninput="updE(${si},'garage',this.value)"></td>
       <td><input class="ti mono-ti" type="text" value="${e.cout||''}" placeholder="€" style="width:58px" oninput="updE(${si},'cout',this.value)"></td>
       <td><input class="ti mono-ti" type="text" value="${(e.facture||'').replace(/"/g,'&quot;')}" placeholder="N° fact." style="width:80px" oninput="updE(${si},'facture',this.value)"></td>
@@ -420,7 +426,10 @@ function renderDyn(){
         <div class="ff"><label>Coût (€)</label><input id="fc" placeholder="ex: 250"></div>
       </div>
       <div class="fg">
-        <div class="ff"><label>Type</label><select id="ft">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select></div>
+        <div class="ff"><label>Type d'intervention</label>
+          <select id="ft" onchange="onTypeChgForm(this)">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+          <input id="ft-autre" type="text" placeholder="Préciser le type…" style="display:none;margin-top:6px" class="ff-autre">
+        </div>
         <div class="ff"><label>Garage / Prestataire</label><input id="fg" placeholder="Nom du garage"></div>
         <div class="ff"><label>N° de facture</label><input id="ff" placeholder="ex: F-2025-001"></div>
       </div>
@@ -460,7 +469,7 @@ function saveE(){
   const date=document.getElementById('fd').value; if(!date) return;
   VH[cur].entretiens.push({
     date, km:document.getElementById('fkm').value,
-    type:document.getElementById('ft').value,
+    type:(document.getElementById('ft').value==='Autre'&&document.getElementById('ft-autre').style.display!=='none'?document.getElementById('ft-autre').value||'Autre':document.getElementById('ft').value),
     garage:document.getElementById('fg').value,
     cout:document.getElementById('fc').value,
     facture:document.getElementById('ff').value,
@@ -489,6 +498,30 @@ function updE(si, field, val){
   const entry=sorted[si];
   const ri=VH[cur].entretiens.indexOf(entry);
   if(ri>=0){ VH[cur].entretiens[ri][field]=val; saveData(); }
+}
+
+// Gestion "Autre" dans le tableau éditable
+function onTypeChgE(sel, si){
+  const inp = sel.nextElementSibling;
+  if(sel.value === 'Autre'){
+    inp.style.display = 'inline';
+    inp.focus();
+    updE(si, 'type', inp.value||'Autre');
+  } else {
+    inp.style.display = 'none';
+    updE(si, 'type', sel.value);
+  }
+}
+
+// Gestion "Autre" dans le formulaire d'ajout
+function onTypeChgForm(sel){
+  const inp = document.getElementById('ft-autre');
+  if(sel.value === 'Autre'){
+    inp.style.display = 'block';
+    inp.focus();
+  } else {
+    inp.style.display = 'none';
+  }
 }
 
 function updP(i, field, val){
