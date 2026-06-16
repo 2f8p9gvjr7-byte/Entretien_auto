@@ -1,10 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carnet d'entretien</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F5A623">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -19,34 +22,67 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 
-.hdr{background:var(--bg2);border-bottom:2px solid var(--o);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
-.hdr-logo{width:34px;height:34px;background:var(--o);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.hdr h1{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--o)}
-.hdr .sub{font-size:11px;color:var(--tm);margin-left:auto;font-family:var(--m)}
-.save-badge{font-size:10px;color:var(--g);font-family:var(--m);opacity:0;transition:opacity .4s}
-.save-badge.show{opacity:1}
+/* ── HEADER ── */
+.hdr{background:var(--bg2);border-bottom:2px solid var(--o);padding:0 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;height:54px}
 
+/* Logo SVG animé */
+.hdr-logo{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hdr-logo svg{width:36px;height:36px}
+
+.hdr-title{display:flex;flex-direction:column;gap:1px}
+.hdr-title h1{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--o);line-height:1}
+.hdr-title .sub2{font-size:9px;color:var(--tf);font-family:var(--m);letter-spacing:.06em}
+
+.save-badge{margin-left:auto;font-size:10px;color:var(--g);font-family:var(--m);opacity:0;transition:opacity .4s;display:flex;align-items:center;gap:4px}
+.save-badge.show{opacity:1}
+.offline-badge{font-size:9px;font-family:var(--m);color:var(--tm);background:var(--b2);border-radius:4px;padding:2px 7px;display:none}
+.offline-badge.show{display:inline}
+
+/* ── TABS ── */
 .tabs{background:var(--bg2);display:flex;overflow-x:auto;padding:0 16px;border-bottom:1px solid var(--b)}
-.tab{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;border-bottom:2px solid transparent;font-size:13px;font-weight:500;color:var(--tm);white-space:nowrap;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:7px;padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;font-size:12px;font-weight:600;color:var(--tm);white-space:nowrap;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
 .tab:hover{color:var(--t)}
 .tab.on{color:var(--o);border-bottom-color:var(--o)}
-.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.tim{font-family:var(--m);font-size:10px;opacity:.5}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tim{font-family:var(--m);font-size:9px;opacity:.5}
 
-.main{max-width:980px;margin:0 auto;padding:20px 16px}
+.main{max-width:980px;margin:0 auto;padding:16px}
 
-/* IDENTITY */
-.icard{background:var(--card);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:16px}
-.icard-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--b);background:var(--card2)}
-.stripe{width:4px;height:30px;border-radius:2px;flex-shrink:0}
-.icard-hdr h2{font-size:15px;font-weight:700;color:var(--t);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.plate{flex-shrink:0;background:var(--bg);border:1px solid var(--ob);border-radius:7px;padding:5px 12px;font-family:var(--m);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--o)}
+/* ── IDENTITY CARD (accordéon) ── */
+.icard{background:var(--card);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:14px}
+
+/* Header cliquable = résumé + toggle */
+.icard-summary{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;transition:background .12s}
+.icard-summary:hover{background:rgba(255,255,255,0.03)}
+.stripe{width:4px;height:32px;border-radius:2px;flex-shrink:0}
+.icard-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.icard-info .iname{font-size:15px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.plate{background:var(--bg);border:1px solid var(--ob);border-radius:6px;padding:3px 10px;font-family:var(--m);font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--o);flex-shrink:0}
+.imeta-pill{font-size:10px;font-family:var(--m);color:var(--tm);background:var(--b);border-radius:4px;padding:2px 6px}
+.toggle-btn{flex-shrink:0;width:28px;height:28px;border-radius:7px;background:var(--b);display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:13px;transition:all .2s}
+.toggle-btn.open{background:var(--obg);color:var(--o);transform:rotate(180deg)}
+
+/* Panneau dépliable */
+.icard-panel{display:none;border-top:1px solid var(--b)}
+.icard-panel.open{display:block}
+
+/* Sous-sections à l'intérieur du panneau */
+.isec{border-bottom:1px solid var(--b)}
+.isec:last-child{border-bottom:none}
+.isec-h{padding:9px 16px;background:var(--card2);display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.isec-h span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--o)}
+.isec-h .chev{font-size:11px;color:var(--tm);transition:transform .15s}
+.isec-h.open .chev{transform:rotate(180deg)}
+.isec-body{display:none}
+.isec-body.open{display:block}
 
 .igrid{display:grid;grid-template-columns:repeat(2,1fr)}
 @media(min-width:600px){.igrid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:900px){.igrid{grid-template-columns:repeat(4,1fr)}}
 
-.if{padding:11px 14px;border-right:1px solid var(--b);border-bottom:1px solid var(--b)}
+.if{padding:10px 14px;border-right:1px solid var(--b);border-bottom:1px solid var(--b)}
 .igrid .if:nth-child(2n){border-right:none}
 @media(min-width:600px){
   .igrid .if:nth-child(2n){border-right:1px solid var(--b)}
@@ -56,20 +92,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
   .igrid .if:nth-child(3n){border-right:1px solid var(--b)}
   .igrid .if:nth-child(4n){border-right:none}
 }
-.if label{display:block;font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tf);margin-bottom:5px}
-
-/* INPUTS — suffisamment grands pour être cliquables sur mobile */
+.if label{display:block;font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tf);margin-bottom:4px}
 .if input,.if select,.if textarea{
-  display:block;width:100%;
-  border:none;border-radius:4px;
-  background:transparent;
-  font-family:var(--f);font-size:14px;font-weight:500;
-  color:var(--t);
-  padding:2px 0;
-  outline:none;
-  -webkit-appearance:none;
-  min-height:28px;
-  cursor:text;
+  display:block;width:100%;border:none;border-radius:4px;background:transparent;
+  font-family:var(--f);font-size:14px;font-weight:500;color:var(--t);
+  padding:2px 0;outline:none;-webkit-appearance:none;min-height:28px;cursor:text;
 }
 .if input::placeholder{color:var(--tf);font-weight:400}
 .if input:focus,.if select:focus{background:rgba(255,255,255,0.07);border-radius:4px;padding:2px 4px;margin:0 -4px;width:calc(100% + 8px)}
@@ -77,8 +104,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .if select option{background:var(--card2);color:var(--t)}
 .mono-f input,.mono-f select{font-family:var(--m);font-size:12px}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 @media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
 .sc{background:var(--card);border:1px solid var(--b2);border-radius:12px;padding:13px 14px}
 .sc .sl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--tf);margin-bottom:5px}
@@ -87,14 +114,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .sc .ss{font-size:10px;color:var(--tf);margin-top:4px;font-family:var(--m)}
 .ct-ok{color:var(--g)!important}.ct-ko{color:var(--r)!important}
 
-/* SECTION */
+/* ── SECTION ── */
 .sec{background:var(--card);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .sec-h{padding:11px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:var(--card2)}
 .sec-h h3{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--o);display:flex;align-items:center;gap:6px}
 .btn-add{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;border:1px solid var(--ob);background:var(--obg);font-family:var(--f);font-size:12px;font-weight:600;color:var(--o);cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent}
 .btn-add:active{background:var(--o);color:var(--bg2)}
 
-/* TABLE */
+/* ── TABLE ── */
 .twrap{overflow-x:auto}
 .ht{width:100%;border-collapse:collapse;font-size:12px;min-width:520px}
 .ht th{text-align:left;padding:8px 12px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tf);border-bottom:1px solid var(--b);background:var(--card2);white-space:nowrap}
@@ -107,7 +134,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .bdel{background:none;border:none;cursor:pointer;color:var(--tf);padding:4px 7px;border-radius:5px;font-size:13px;transition:all .1s;-webkit-tap-highlight-color:transparent}
 .bdel:active{color:var(--r);background:var(--rbg)}
 
-/* ADD FORM */
+/* ── ADD FORM ── */
 .af{display:none;padding:16px;background:var(--bg2);border-top:1px solid var(--b)}
 .af.open{display:block}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
@@ -127,7 +154,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .bsave:active{opacity:.8}
 .bcancel{padding:9px 14px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--tm);font-family:var(--f);font-size:13px;cursor:pointer;min-height:40px}
 
-/* INLINE TABLE INPUTS */
+/* ── INLINE TABLE INPUTS ── */
 .ti{border:none;border-radius:4px;background:transparent;font-family:var(--f);font-size:12px;font-weight:500;color:var(--t);padding:2px 4px;margin:-2px -4px;outline:none;width:100%;min-width:60px;min-height:28px;cursor:text}
 .ti::placeholder{color:var(--tf)}
 .ti:focus{background:rgba(255,255,255,0.08);border-radius:4px}
@@ -148,15 +175,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .esel{border:1px solid currentColor;border-radius:5px;padding:4px 6px;font-size:11px;font-weight:600;font-family:var(--f);background:transparent;color:inherit;cursor:pointer;min-height:28px}
 .esel option{background:var(--card2);color:var(--t)}
 
-/* NOTES */
+/* ── NOTES ── */
 .narea{padding:12px 16px}
 .narea textarea{width:100%;border:1px solid var(--b2);border-radius:9px;padding:10px 12px;font-family:var(--f);font-size:13px;background:var(--bg2);color:var(--t);outline:none;resize:vertical;min-height:72px;transition:border-color .12s}
 .narea textarea::placeholder{color:var(--tf)}
 .narea textarea:focus{border-color:var(--o)}
 .empty{padding:18px;text-align:center;font-size:12px;color:var(--tf)}
 
-/* RESET BTN */
-.reset-wrap{text-align:right;margin-bottom:10px}
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:12px}
 .breset{font-size:11px;color:var(--tf);background:none;border:1px solid var(--b2);border-radius:5px;padding:4px 10px;cursor:pointer;font-family:var(--m)}
 .breset:hover{color:var(--r);border-color:var(--rb)}
 </style>
@@ -164,22 +191,52 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 <body>
 
 <div class="hdr">
+  <!-- Logo SVG "clé + route" -->
   <div class="hdr-logo">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2340" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- fond arrondi -->
+      <rect width="36" height="36" rx="9" fill="#F5A623"/>
+      <!-- route stylisée -->
+      <rect x="16" y="7" width="4" height="22" rx="2" fill="#141d33" opacity=".25"/>
+      <!-- volant -->
+      <circle cx="18" cy="18" r="8" stroke="#141d33" stroke-width="2.2" fill="none"/>
+      <circle cx="18" cy="18" r="2.5" fill="#141d33"/>
+      <line x1="18" y1="10" x2="18" y2="13" stroke="#141d33" stroke-width="2" stroke-linecap="round"/>
+      <line x1="18" y1="23" x2="18" y2="26" stroke="#141d33" stroke-width="2" stroke-linecap="round"/>
+      <line x1="10" y1="18" x2="13" y2="18" stroke="#141d33" stroke-width="2" stroke-linecap="round"/>
+      <line x1="23" y1="18" x2="26" y2="18" stroke="#141d33" stroke-width="2" stroke-linecap="round"/>
+      <!-- clé -->
+      <g transform="translate(22,6) rotate(45)">
+        <rect x="0" y="0" width="2.5" height="7" rx="1" fill="#141d33"/>
+        <circle cx="1.25" cy="-1.5" r="2.5" stroke="#141d33" stroke-width="1.8" fill="none"/>
+      </g>
+    </svg>
   </div>
-  <h1>Carnet d'entretien</h1>
+  <div class="hdr-title">
+    <h1>Carnet d'entretien</h1>
+    <div class="sub2" id="vh-count">4 véhicules</div>
+  </div>
   <span class="save-badge" id="sb">✓ Sauvegardé</span>
-  <span class="sub">4 véhicules</span>
+  <span class="offline-badge" id="ob">hors ligne</span>
 </div>
 
 <div class="tabs" id="tabs"></div>
 <div class="main">
-  <div class="reset-wrap"><button class="breset" onclick="resetData()">↺ Réinitialiser les données</button></div>
+  <div class="toolbar"><button class="breset" onclick="resetData()">↺ Réinitialiser</button></div>
   <div id="zone-id"></div>
   <div id="zone-dyn"></div>
 </div>
 
 <script>
+/* ── SERVICE WORKER ── */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+window.addEventListener('online',  ()=>document.getElementById('ob').classList.remove('show'));
+window.addEventListener('offline', ()=>document.getElementById('ob').classList.add('show'));
+if(!navigator.onLine) document.getElementById('ob').classList.add('show');
+
+/* ── DONNÉES ── */
 const COLORS=['#4a9fd4','#5db87a','#e07b4a','#c97fd4'];
 const CARBS=['Essence','Diesel','Hybride essence','Hybride diesel','Électrique','GPL','GNV'];
 const BOITES=['Manuelle','Automatique','Séquentielle','CVT'];
@@ -234,73 +291,108 @@ const DEFAULTS=[
    prochains:[{type:'Révision générale',km:'40000',date:'2026-06',prio:'ok'}]}
 ];
 
-/* ── LOCALSTORAGE ── */
 const LS_KEY = 'carnet_entretien_v1';
+const LS_UI  = 'carnet_ui_v1';
 
 function loadData(){
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if(raw) return JSON.parse(raw);
-  } catch(e){}
-  return JSON.parse(JSON.stringify(DEFAULTS)); // deep copy
+  try{ const r=localStorage.getItem(LS_KEY); if(r) return JSON.parse(r); }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULTS));
 }
-
 function saveData(){
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(VH));
-    const sb = document.getElementById('sb');
+  try{
+    localStorage.setItem(LS_KEY,JSON.stringify(VH));
+    const sb=document.getElementById('sb');
     sb.classList.add('show');
     clearTimeout(window._sbt);
-    window._sbt = setTimeout(()=>sb.classList.remove('show'), 1800);
-  } catch(e){}
+    window._sbt=setTimeout(()=>sb.classList.remove('show'),1800);
+  }catch(e){}
 }
-
 function resetData(){
   if(!confirm('Réinitialiser toutes les données ? Cette action est irréversible.')) return;
-  localStorage.removeItem(LS_KEY);
+  localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_UI);
   location.reload();
 }
 
-let VH = loadData();
-let cur = 0, adding = false;
+/* état UI persisté */
+function loadUI(){ try{ return JSON.parse(localStorage.getItem(LS_UI)||'{}'); }catch(e){return {};} }
+function saveUI(k,v){ try{ const u=loadUI(); u[k]=v; localStorage.setItem(LS_UI,JSON.stringify(u)); }catch(e){} }
+
+let VH=loadData(), cur=0, adding=false;
+const UI=loadUI(); // { panelOpen:bool, sections:{ id:bool } }
 
 /* ── HELPERS ── */
-function fd(s){ if(!s) return '—'; return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function fk(n){ return n ? parseInt(n).toLocaleString('fr-FR') : '—'; }
-function tot(v){ return v.entretiens.reduce((s,e)=>s+(parseFloat(e.cout)||0),0); }
+const fd=s=>s?new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';
+const fk=n=>n?parseInt(n).toLocaleString('fr-FR'):'—';
+const tot=v=>v.entretiens.reduce((s,e)=>s+(parseFloat(e.cout)||0),0);
 
 /* ── TABS ── */
 function renderTabs(){
-  document.getElementById('tabs').innerHTML = VH.map((v,i)=>`
+  document.getElementById('tabs').innerHTML=VH.map((v,i)=>`
     <div class="tab${cur===i?' on':''}" onclick="sw(${i})">
       <span class="dot" style="background:${COLORS[i%COLORS.length]}"></span>
       <span class="tname">${v.designation||'Véhicule '+(i+1)}</span>
       <span class="tim">${v.immat||'—'}</span>
     </div>`).join('');
+  document.getElementById('vh-count').textContent=VH.length+' véhicule'+(VH.length>1?'s':'');
 }
-
 function updateTab(i){
   const tabs=document.querySelectorAll('.tab');
   if(!tabs[i]) return;
-  const nm=tabs[i].querySelector('.tname');
-  const im=tabs[i].querySelector('.tim');
+  const nm=tabs[i].querySelector('.tname'), im=tabs[i].querySelector('.tim');
   if(nm) nm.textContent=VH[i].designation||'Véhicule '+(i+1);
   if(im) im.textContent=VH[i].immat||'—';
 }
-
 function sw(i){ cur=i; adding=false; renderTabs(); renderID(); renderDyn(); }
 
-/* ── CHAMP IDENTITÉ : met à jour data + sauvegarde, SANS re-rendre la page ── */
-function upd(key, val){
-  VH[cur][key] = val;
+/* ── IDENTITY UPDATE (sans re-render) ── */
+function upd(key,val){
+  VH[cur][key]=val;
   if(key==='designation'||key==='immat') updateTab(cur);
   saveData();
+  // mise à jour du résumé visible dans le header de la carte
+  const el=document.getElementById('icard-name'); if(el) el.textContent=VH[cur].designation||'Véhicule '+(cur+1);
+  const pl=document.getElementById('icard-plate'); if(pl) pl.textContent=VH[cur].immat||'—';
+  const km=document.getElementById('icard-km'); if(km) km.textContent=VH[cur].km?fk(VH[cur].km)+' km':'';
 }
 
-/* ── Génère HTML d'un champ identité ── */
-function F(label, key, val, opts, mono, ph){
-  const mc = mono ? ' mono-f' : '';
-  const cb = `upd('${key}',this.value)`;
+/* ── ACCORDÉON IDENTITÉ ── */
+function togglePanel(){
+  const panel=document.getElementById('icard-panel');
+  const btn=document.getElementById('toggle-btn');
+  const open=!panel.classList.contains('open');
+  panel.classList.toggle('open',open);
+  btn.classList.toggle('open',open);
+  saveUI('panelOpen',open);
+}
+function toggleSec(id){
+  const body=document.getElementById('sec-body-'+id);
+  const h=document.getElementById('sec-h-'+id);
+  const open=!body.classList.contains('open');
+  body.classList.toggle('open',open);
+  h.classList.toggle('open',open);
+  const u=loadUI();
+  u.sections=u.sections||{};
+  u.sections[id]=open;
+  localStorage.setItem(LS_UI,JSON.stringify(u));
+}
+function secOpen(id){ const u=loadUI(); return u.sections&&u.sections[id]!==undefined?u.sections[id]:true; }
+
+/* génère une sous-section d'identité */
+function iSec(id, title, fields){
+  const open=secOpen(id);
+  return `<div class="isec">
+    <div class="isec-h${open?' open':''}" id="sec-h-${id}" onclick="toggleSec('${id}')">
+      <span>${title}</span><span class="chev">▾</span>
+    </div>
+    <div class="isec-body${open?' open':''}" id="sec-body-${id}">
+      <div class="igrid">${fields}</div>
+    </div>
+  </div>`;
+}
+
+function F(label,key,val,opts,mono,ph){
+  const mc=mono?' mono-f':'';
+  const cb=`upd('${key}',this.value)`;
   if(opts){
     return `<div class="if${mc}"><label>${label}</label>
       <select onchange="${cb}">${opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')}</select>
@@ -312,40 +404,67 @@ function F(label, key, val, opts, mono, ph){
   </div>`;
 }
 
-/* ── FICHE IDENTITÉ — re-rendue uniquement au changement de véhicule ── */
+/* ── FICHE IDENTITÉ ── */
 function renderID(){
   const v=VH[cur];
+  const panelOpen=UI.panelOpen!==false; // default open
+  const color=COLORS[cur%COLORS.length];
+
+  const resume=`<div style="display:flex;flex-direction:column;gap:1px">
+    <div style="font-size:11px;color:var(--tm);font-family:var(--m)">${v.carb||''}${v.carb&&v.boite?' · ':''}${v.boite||''}${(v.carb||v.boite)&&v.cyl?' · ':''}${v.cyl?v.cyl+' cm³':''}</div>
+  </div>`;
+
   document.getElementById('zone-id').innerHTML=`
   <div class="icard">
-    <div class="icard-hdr">
-      <div class="stripe" style="background:${COLORS[cur%COLORS.length]}"></div>
-      <h2>${v.designation||'Véhicule '+(cur+1)}</h2>
-      <span class="plate">${v.immat||'—'}</span>
+    <div class="icard-summary" onclick="togglePanel()">
+      <div class="stripe" style="background:${color}"></div>
+      <div class="icard-info">
+        <div class="icard-info iname" id="icard-name">${v.designation||'Véhicule '+(cur+1)}</div>
+        <div class="icard-meta">
+          <span class="plate" id="icard-plate">${v.immat||'—'}</span>
+          ${v.km?`<span class="imeta-pill" id="icard-km">${fk(v.km)} km</span>`:'<span id="icard-km"></span>'}
+          ${v.carb?`<span class="imeta-pill">${v.carb}</span>`:''}
+          ${v.version?`<span class="imeta-pill" style="display:none" id="ver-pill">${v.version}</span>`:''}
+        </div>
+      </div>
+      <button class="toggle-btn${panelOpen?' open':''}" id="toggle-btn" onclick="event.stopPropagation();togglePanel()">▾</button>
     </div>
-    <div class="igrid">
-      ${F('Désignation complète','designation',v.designation,null,false,'ex: Peugeot 308 SW')}
-      ${F('Immatriculation','immat',v.immat,null,true,'AB-123-CD')}
-      ${F('1ère mise en circulation','date_mec',v.date_mec,null,false)}
-      ${F('Kilométrage actuel','km',v.km,null,true,'ex: 87500')}
-      ${F('N° de série (VIN/NIV)','vin',v.vin,null,true,'17 caractères')}
-      ${F('Puissance fiscale (CV)','pf',v.pf,null,true,'ex: 7')}
-      ${F('Puissance DIN (ch)','pdin',v.pdin,null,true,'ex: 130')}
-      ${F('Cylindrée (cm³)','cyl',v.cyl,null,true,'ex: 1499')}
-      ${F('Marque','marque',v.marque,null,false,'ex: Peugeot')}
-      ${F('Modèle','modele',v.modele,null,false,'ex: 308')}
-      ${F('Version / finition','version',v.version,null,false,'ex: 1.5 BlueHDi')}
-      ${F('Genre (VP/VU…)','genre',v.genre,null,false,'VP')}
-      ${F('Carburant','carb',v.carb,CARBS,false)}
-      ${F('Boîte de vitesse','boite',v.boite,BOITES,false)}
-      ${F('Couleur','couleur',v.couleur,COLS,false)}
-      ${F('Nb de places','places',v.places,null,true,'5')}
-      ${F('PTAC (kg)','ptac',v.ptac,null,true,'ex: 1800')}
-      ${F('Propriétaire / Titulaire','proprio',v.proprio,null,false,'Nom ou société')}
-      ${F('Assurance — échéance','assur',v.assur,null,false)}
-      ${F('Dernier CT','ct_date',v.ct_date,null,false)}
-      ${F('CT valable jusqu\'au','ct_valid',v.ct_valid,null,false)}
+    <div class="icard-panel${panelOpen?' open':''}" id="icard-panel">
+      ${iSec('id','Identification & carte grise',
+        F('Désignation complète','designation',v.designation,null,false,'ex: Peugeot 308 SW')+
+        F('Immatriculation','immat',v.immat,null,true,'AB-123-CD')+
+        F('1ère mise en circulation','date_mec',v.date_mec,null,false)+
+        F('N° de série (VIN/NIV)','vin',v.vin,null,true,'17 caractères')+
+        F('Marque','marque',v.marque,null,false,'ex: Peugeot')+
+        F('Modèle','modele',v.modele,null,false,'ex: 308')+
+        F('Version / finition','version',v.version,null,false,'ex: 1.5 BlueHDi')+
+        F('Genre (VP/VU…)','genre',v.genre,null,false,'VP')
+      )}
+      ${iSec('tech','Caractéristiques techniques',
+        F('Carburant','carb',v.carb,CARBS,false)+
+        F('Boîte de vitesse','boite',v.boite,BOITES,false)+
+        F('Couleur','couleur',v.couleur,COLS,false)+
+        F('Puissance fiscale (CV)','pf',v.pf,null,true,'ex: 7')+
+        F('Puissance DIN (ch)','pdin',v.pdin,null,true,'ex: 130')+
+        F('Cylindrée (cm³)','cyl',v.cyl,null,true,'ex: 1499')+
+        F('Nb de places','places',v.places,null,true,'5')+
+        F('PTAC (kg)','ptac',v.ptac,null,true,'ex: 1800')
+      )}
+      ${iSec('admin','Administratif & assurance',
+        F('Kilométrage actuel','km',v.km,null,true,'ex: 87500')+
+        F('Propriétaire / Titulaire','proprio',v.proprio,null,false,'Nom ou société')+
+        F('Assurance — échéance','assur',v.assur,null,false)+
+        F('Dernier CT','ct_date',v.ct_date,null,false)+
+        F('CT valable jusqu\'au','ct_valid',v.ct_valid,null,false)
+      )}
     </div>
   </div>`;
+
+  // Sync UI state
+  if(UI.panelOpen===false){
+    document.getElementById('icard-panel').classList.remove('open');
+    document.getElementById('toggle-btn').classList.remove('open');
+  }
 }
 
 /* ── SECTIONS DYNAMIQUES ── */
@@ -356,9 +475,6 @@ function renderDyn(){
   const last=sorted[0]||null;
   const ctExp=v.ct_valid&&new Date(v.ct_valid)<new Date();
   const ctC=!v.ct_valid?'':ctExp?'ct-ko':'ct-ok';
-
-  // trouve l'index réel dans VH[cur].entretiens depuis l'index trié
-  function realIdx(si){ return VH[cur].entretiens.indexOf(sorted[si]); }
 
   const rows=sorted.length===0
     ?`<tr><td colspan="8" class="empty">Aucune intervention enregistrée.</td></tr>`
@@ -430,8 +546,8 @@ function renderDyn(){
           <select id="ft" onchange="onTypeChgForm(this)">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
           <input id="ft-autre" type="text" placeholder="Préciser le type…" style="display:none;margin-top:6px" class="ff-autre">
         </div>
-        <div class="ff"><label>Garage / Prestataire</label><input id="fg" placeholder="Nom du garage"></div>
-        <div class="ff"><label>N° de facture</label><input id="ff" placeholder="ex: F-2025-001"></div>
+        <div class="ff"><label>Garage / Prestataire</label><input id="fg2" placeholder="Nom du garage"></div>
+        <div class="ff"><label>N° de facture</label><input id="ff2" placeholder="ex: F-2025-001"></div>
       </div>
       <div class="ff"><label>Notes</label><textarea id="fn" placeholder="Pièces, références, observations..."></textarea></div>
       <div class="fac">
@@ -464,70 +580,49 @@ function toggleAdd(){
   adding=!adding; renderDyn();
   if(adding) setTimeout(()=>document.getElementById('af').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
-
 function saveE(){
   const date=document.getElementById('fd').value; if(!date) return;
   VH[cur].entretiens.push({
     date, km:document.getElementById('fkm').value,
-    type:(document.getElementById('ft').value==='Autre'&&document.getElementById('ft-autre').style.display!=='none'?document.getElementById('ft-autre').value||'Autre':document.getElementById('ft').value),
-    garage:document.getElementById('fg').value,
+    type:(document.getElementById('ft').value==='Autre'&&document.getElementById('ft-autre').style.display!=='none'
+      ?document.getElementById('ft-autre').value||'Autre'
+      :document.getElementById('ft').value),
+    garage:document.getElementById('fg2').value,
     cout:document.getElementById('fc').value,
-    facture:document.getElementById('ff').value,
+    facture:document.getElementById('ff2').value,
     notes:document.getElementById('fn').value
   });
   adding=false; saveData(); renderDyn();
 }
-
 function delE(si){
   if(!confirm('Supprimer cette intervention ?')) return;
   const s=[...VH[cur].entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const ri=VH[cur].entretiens.indexOf(s[si]);
   VH[cur].entretiens.splice(ri,1); saveData(); renderDyn();
 }
-
 function addP(){
   const type=prompt("Type d'intervention :"); if(!type) return;
   const km=prompt("Kilométrage prévu (vide si N/A) :")||'';
   const date=prompt("Date prévue (ex: 2026-08) :")||'';
   VH[cur].prochains.push({type,km,date,prio:'ok'}); saveData(); renderDyn();
 }
-
-function updE(si, field, val){
-  // si = index dans le tableau trié, on retrouve l'entrée réelle
+function updE(si,field,val){
   const sorted=[...VH[cur].entretiens].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const entry=sorted[si];
   const ri=VH[cur].entretiens.indexOf(entry);
   if(ri>=0){ VH[cur].entretiens[ri][field]=val; saveData(); }
 }
-
-// Gestion "Autre" dans le tableau éditable
-function onTypeChgE(sel, si){
-  const inp = sel.nextElementSibling;
-  if(sel.value === 'Autre'){
-    inp.style.display = 'inline';
-    inp.focus();
-    updE(si, 'type', inp.value||'Autre');
-  } else {
-    inp.style.display = 'none';
-    updE(si, 'type', sel.value);
-  }
+function onTypeChgE(sel,si){
+  const inp=sel.nextElementSibling;
+  if(sel.value==='Autre'){ inp.style.display='inline'; inp.focus(); updE(si,'type',inp.value||'Autre'); }
+  else{ inp.style.display='none'; updE(si,'type',sel.value); }
 }
-
-// Gestion "Autre" dans le formulaire d'ajout
 function onTypeChgForm(sel){
-  const inp = document.getElementById('ft-autre');
-  if(sel.value === 'Autre'){
-    inp.style.display = 'block';
-    inp.focus();
-  } else {
-    inp.style.display = 'none';
-  }
+  const inp=document.getElementById('ft-autre');
+  if(sel.value==='Autre'){ inp.style.display='block'; inp.focus(); }
+  else{ inp.style.display='none'; }
 }
-
-function updP(i, field, val){
-  VH[cur].prochains[i][field]=val; saveData();
-}
-
+function updP(i,field,val){ VH[cur].prochains[i][field]=val; saveData(); }
 function setPrio(i,val){ VH[cur].prochains[i].prio=val; saveData(); renderDyn(); }
 function delP(i){ VH[cur].prochains.splice(i,1); saveData(); renderDyn(); }
 
