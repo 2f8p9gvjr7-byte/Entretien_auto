@@ -22,19 +22,17 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 
-/* ── HEADER ── */
 .hdr{background:var(--bg2);border-bottom:2px solid var(--o);padding:0 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;height:54px}
-.hdr-logo{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hdr-logo{width:36px;height:36px;flex-shrink:0}
 .hdr-logo svg{width:36px;height:36px}
 .hdr-title{display:flex;flex-direction:column;gap:1px}
 .hdr-title h1{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--o);line-height:1}
 .hdr-title .sub2{font-size:9px;color:var(--tf);font-family:var(--m);letter-spacing:.06em}
-.save-badge{margin-left:auto;font-size:10px;color:var(--g);font-family:var(--m);opacity:0;transition:opacity .4s;display:flex;align-items:center;gap:4px}
+.save-badge{margin-left:auto;font-size:10px;color:var(--g);font-family:var(--m);opacity:0;transition:opacity .4s}
 .save-badge.show{opacity:1}
 .offline-badge{font-size:9px;font-family:var(--m);color:var(--tm);background:var(--b2);border-radius:4px;padding:2px 7px;display:none}
 .offline-badge.show{display:inline}
 
-/* ── TABS ── */
 .tabs{background:var(--bg2);display:flex;overflow-x:auto;padding:0 16px;border-bottom:1px solid var(--b)}
 .tabs::-webkit-scrollbar{display:none}
 .tab{display:flex;align-items:center;gap:7px;padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;font-size:12px;font-weight:600;color:var(--tm);white-space:nowrap;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -43,6 +41,68 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .tim{font-family:var(--m);font-size:9px;opacity:.5}
 .main{max-width:980px;margin:0 auto;padding:16px}
+
+/* ── SCAN MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--b2);border-radius:16px;width:100%;max-width:520px;overflow:hidden}
+.modal-h{padding:14px 18px;background:var(--card2);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
+.modal-h h2{font-size:13px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.modal-close{background:none;border:none;color:var(--tm);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:5px}
+.modal-close:hover{color:var(--t)}
+.modal-body{padding:18px;display:flex;flex-direction:column;gap:14px}
+
+/* Zone de drop / aperçu */
+.scan-drop{border:2px dashed var(--b2);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.scan-drop:hover,.scan-drop.drag{border-color:var(--o);background:var(--obg)}
+.scan-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.scan-drop-icon{font-size:32px;margin-bottom:8px}
+.scan-drop p{font-size:13px;color:var(--tm)}
+.scan-drop p b{color:var(--o)}
+.scan-drop small{font-size:10px;color:var(--tf);font-family:var(--m)}
+
+/* Bouton caméra séparé */
+.scan-cam-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;border:1px solid var(--b2);background:var(--bg2);font-family:var(--f);font-size:13px;font-weight:600;color:var(--tm);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.scan-cam-btn:hover{border-color:var(--ob);color:var(--o);background:var(--obg)}
+.scan-cam-btn svg{flex-shrink:0}
+
+/* Preview image */
+.scan-preview{display:none;border-radius:10px;overflow:hidden;position:relative}
+.scan-preview.show{display:block}
+.scan-preview img{width:100%;max-height:220px;object-fit:contain;background:#000;display:block}
+.scan-preview-bar{padding:8px 12px;background:var(--card2);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scan-preview-bar span{font-size:11px;color:var(--tm);font-family:var(--m)}
+.btn-rescan{font-size:11px;color:var(--tf);background:none;border:1px solid var(--b2);border-radius:5px;padding:3px 9px;cursor:pointer;font-family:var(--m)}
+.btn-rescan:hover{color:var(--o);border-color:var(--ob)}
+
+/* OCR status */
+.ocr-status{padding:10px 14px;border-radius:9px;font-size:12px;display:none;align-items:center;gap:10px}
+.ocr-status.show{display:flex}
+.ocr-status.running{background:var(--obg);border:1px solid var(--ob);color:var(--o)}
+.ocr-status.done{background:var(--gbg);border:1px solid var(--gb);color:var(--g)}
+.ocr-status.err{background:var(--rbg);border:1px solid var(--rb);color:var(--r)}
+.ocr-spin{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ocr-progress{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.ocr-progress-bar{height:100%;background:currentColor;transition:width .3s;width:0}
+
+/* Résultats OCR — champs pré-remplis éditables */
+.ocr-fields{display:none;flex-direction:column;gap:8px}
+.ocr-fields.show{display:flex}
+.ocr-fields-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--tf)}
+.ocr-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ocr-field{display:flex;flex-direction:column;gap:3px}
+.ocr-field label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tf)}
+.ocr-field input{border:1px solid var(--b2);border-radius:7px;padding:7px 10px;font-family:var(--m);font-size:12px;background:var(--card);color:var(--t);outline:none;width:100%;transition:border-color .12s}
+.ocr-field input:focus{border-color:var(--o)}
+.ocr-field input.filled{border-color:var(--gb);background:var(--gbg)}
+.ocr-warn{font-size:10px;color:var(--o);font-family:var(--m);padding:6px 10px;background:var(--obg);border:1px solid var(--ob);border-radius:6px}
+
+.modal-footer{padding:14px 18px;background:var(--card2);border-top:1px solid var(--b);display:flex;gap:8px;justify-content:flex-end}
+.btn-apply{padding:9px 22px;border-radius:7px;border:none;background:var(--o);color:var(--bg2);font-family:var(--f);font-size:13px;font-weight:700;cursor:pointer;display:none}
+.btn-apply.show{display:inline-block}
+.btn-apply:active{opacity:.8}
+.btn-cancel-modal{padding:9px 14px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--tm);font-family:var(--f);font-size:13px;cursor:pointer}
 
 /* ── IDENTITY CARD ── */
 .icard{background:var(--card);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:14px}
@@ -54,8 +114,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .icard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .plate{background:var(--bg);border:1px solid var(--ob);border-radius:6px;padding:3px 10px;font-family:var(--m);font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--o);flex-shrink:0}
 .imeta-pill{font-size:10px;font-family:var(--m);color:var(--tm);background:var(--b);border-radius:4px;padding:2px 6px}
-.toggle-btn{flex-shrink:0;width:28px;height:28px;border-radius:7px;background:var(--b);display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:13px;transition:all .2s}
+.icard-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.toggle-btn{width:28px;height:28px;border-radius:7px;background:var(--b);display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:13px;transition:all .2s;border:none;cursor:pointer}
 .toggle-btn.open{background:var(--obg);color:var(--o);transform:rotate(180deg)}
+.scan-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;border:1px solid var(--ob);background:var(--obg);font-family:var(--f);font-size:11px;font-weight:600;color:var(--o);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.scan-btn:active{background:var(--o);color:var(--bg2)}
+
 .icard-panel{display:none;border-top:1px solid var(--b)}
 .icard-panel.open{display:block}
 .isec{border-bottom:1px solid var(--b)}
@@ -79,7 +143,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .if input:focus,.if select:focus{background:rgba(255,255,255,0.07);border-radius:4px;padding:2px 4px;margin:0 -4px;width:calc(100% + 8px)}
 .if select{cursor:pointer;-webkit-appearance:menulist;appearance:menulist}
 .if select option{background:var(--card2);color:var(--t)}
-.mono-f input,.mono-f select{font-family:var(--m);font-size:12px}
+.mono-f input{font-family:var(--m);font-size:12px}
 
 /* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
@@ -87,18 +151,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .sc{background:var(--card);border:1px solid var(--b2);border-radius:12px;padding:13px 14px}
 .sc .sl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--tf);margin-bottom:5px}
 .sc .sv{font-size:22px;font-weight:700;color:var(--o);line-height:1}
-.sc .su{font-size:11px;font-weight:400;color:var(--tm);margin-left:2px}
+.sc .su{font-size:11px;color:var(--tm);margin-left:2px}
 .sc .ss{font-size:10px;color:var(--tf);margin-top:4px;font-family:var(--m)}
 .ct-ok{color:var(--g)!important}.ct-ko{color:var(--r)!important}
 
-/* ── SECTION ── */
 .sec{background:var(--card);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .sec-h{padding:11px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:var(--card2)}
 .sec-h h3{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--o);display:flex;align-items:center;gap:6px}
-.btn-add{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;border:1px solid var(--ob);background:var(--obg);font-family:var(--f);font-size:12px;font-weight:600;color:var(--o);cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.btn-add{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;border:1px solid var(--ob);background:var(--obg);font-family:var(--f);font-size:12px;font-weight:600;color:var(--o);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .btn-add:active{background:var(--o);color:var(--bg2)}
 
-/* ── TABLE ── */
 .twrap{overflow-x:auto}
 .ht{width:100%;border-collapse:collapse;font-size:12px;min-width:520px}
 .ht th{text-align:left;padding:8px 12px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tf);border-bottom:1px solid var(--b);background:var(--card2);white-space:nowrap}
@@ -106,44 +168,36 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .ht tr:last-child td{border-bottom:none}
 .ht tbody tr.main-row:hover td{background:rgba(255,255,255,0.025)}
 .mono-ti{font-family:var(--m);font-size:11px}
-.ti-sel{border:none;border-radius:6px;background:var(--obg);border:1px solid var(--ob);font-family:var(--f);font-size:11px;font-weight:600;color:var(--o);padding:3px 6px;outline:none;cursor:pointer;min-height:28px;max-width:160px}
-.ti-sel option{background:var(--card2);color:var(--t)}
-.bdel{background:none;border:none;cursor:pointer;color:var(--tf);padding:4px 7px;border-radius:5px;font-size:13px;transition:all .1s;-webkit-tap-highlight-color:transparent}
-.bdel:active{color:var(--r);background:var(--rbg)}
-
-/* ── INLINE INPUTS ── */
 .ti{border:none;border-radius:4px;background:transparent;font-family:var(--f);font-size:12px;font-weight:500;color:var(--t);padding:2px 4px;margin:-2px -4px;outline:none;width:100%;min-width:60px;min-height:28px;cursor:text}
 .ti::placeholder{color:var(--tf)}
-.ti:focus{background:rgba(255,255,255,0.08);border-radius:4px}
-
-/* ── SOUS-LIGNES ── */
-.expand-btn{background:none;border:none;cursor:pointer;color:var(--tf);font-size:11px;padding:3px 6px;border-radius:5px;transition:all .15s;font-family:var(--m);white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.ti:focus{background:rgba(255,255,255,0.08)}
+.ti-sel{border-radius:6px;background:var(--obg);border:1px solid var(--ob);font-family:var(--f);font-size:11px;font-weight:600;color:var(--o);padding:3px 6px;outline:none;cursor:pointer;min-height:28px;max-width:160px}
+.ti-sel option{background:var(--card2);color:var(--t)}
+.bdel{background:none;border:none;cursor:pointer;color:var(--tf);padding:4px 7px;border-radius:5px;font-size:13px;-webkit-tap-highlight-color:transparent}
+.bdel:active{color:var(--r);background:var(--rbg)}
+.expand-btn{background:none;border:none;cursor:pointer;color:var(--tf);font-size:11px;padding:3px 6px;border-radius:5px;font-family:var(--m);white-space:nowrap}
 .expand-btn:hover{color:var(--o)}
-.expand-btn.has-items{color:var(--o);opacity:.9}
+.expand-btn.has-items{color:var(--o)}
 .subrow{display:none;background:rgba(10,15,30,0.4)}
 .subrow.open{display:table-row}
 .subrow td{padding:0!important;border-bottom:none!important}
-.subrow-inner{padding:8px 12px 10px 32px;display:flex;flex-direction:column;gap:4px}
-.subrow-lines{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
-.subline{display:grid;grid-template-columns:1fr 100px 70px 28px;gap:6px;align-items:center;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--b)}
+.subrow-inner{padding:8px 12px 10px 32px}
+.subline-header{display:grid;grid-template-columns:1fr 100px 70px 28px;gap:6px;padding:2px 8px;margin-bottom:2px}
+.subline-header span{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tf)}
+.subline{display:grid;grid-template-columns:1fr 100px 70px 28px;gap:6px;align-items:center;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--b);margin-bottom:3px}
 .subline input{border:none;background:transparent;font-family:var(--f);font-size:11px;color:var(--t);outline:none;padding:1px 0;min-height:22px;width:100%}
 .subline input::placeholder{color:var(--tf)}
 .subline input:focus{border-bottom:1px solid var(--ob)}
-.subline .si-ref{font-family:var(--m);font-size:10px;color:var(--tm)}
-.subline .si-cout{font-family:var(--m);font-size:11px;font-weight:600;color:var(--o)}
-.subline .bdel-sub{background:none;border:none;cursor:pointer;color:var(--tf);font-size:11px;padding:2px 4px;border-radius:3px;line-height:1}
-.subline .bdel-sub:active{color:var(--r)}
-.sub-add-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--f);color:var(--tm);background:var(--b);border:1px solid var(--b2);border-radius:5px;padding:3px 9px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.si-ref{font-family:var(--m)!important;font-size:10px!important;color:var(--tm)}
+.si-cout{font-family:var(--m)!important;font-size:11px!important;font-weight:600;color:var(--o)}
+.bdel-sub{background:none;border:none;cursor:pointer;color:var(--tf);font-size:11px;padding:2px 4px;border-radius:3px}
+.bdel-sub:active{color:var(--r)}
+.sub-add-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--f);color:var(--tm);background:var(--b);border:1px solid var(--b2);border-radius:5px;padding:3px 9px;cursor:pointer;margin-top:6px}
 .sub-add-btn:active{background:var(--obg);color:var(--o);border-color:var(--ob)}
-.sub-total{font-size:10px;font-family:var(--m);color:var(--tm);margin-left:auto;padding-top:2px}
+.sub-total{font-size:10px;font-family:var(--m);color:var(--tm);margin-left:auto;padding-top:6px}
 .sub-total b{color:var(--o)}
 .subrow-footer{display:flex;align-items:center;gap:8px}
 
-/* ── LABEL DES COLONNES SOUS-LIGNES ── */
-.subline-header{display:grid;grid-template-columns:1fr 100px 70px 28px;gap:6px;padding:2px 8px;margin-bottom:2px}
-.subline-header span{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tf)}
-
-/* ── ADD FORM ── */
 .af{display:none;padding:16px;background:var(--bg2);border-top:1px solid var(--b)}
 .af.open{display:block}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
@@ -155,15 +209,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .ff select option{background:var(--card2)}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--o)}
 .ff textarea{resize:vertical;min-height:58px}
-.ff-autre{border:1px solid var(--ob);border-radius:7px;padding:7px 10px;font-family:var(--f);font-size:13px;background:var(--card);color:var(--t);outline:none;width:100%;transition:border-color .12s}
+.ff-autre{border:1px solid var(--ob);border-radius:7px;padding:7px 10px;font-family:var(--f);font-size:13px;background:var(--card);color:var(--t);outline:none;width:100%}
 .ff-autre::placeholder{color:var(--tf)}
-.ff-autre:focus{border-color:var(--o)}
 .fac{display:flex;gap:8px;margin-top:10px}
-.bsave{padding:9px 20px;border-radius:7px;border:none;background:var(--o);color:var(--bg2);font-family:var(--f);font-size:13px;font-weight:700;cursor:pointer;min-height:40px;-webkit-tap-highlight-color:transparent}
+.bsave{padding:9px 20px;border-radius:7px;border:none;background:var(--o);color:var(--bg2);font-family:var(--f);font-size:13px;font-weight:700;cursor:pointer;min-height:40px}
 .bsave:active{opacity:.8}
 .bcancel{padding:9px 14px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--tm);font-family:var(--f);font-size:13px;cursor:pointer;min-height:40px}
 
-/* ── ÉCHÉANCES ── */
 .ech-inp{border:none;border-bottom:1px solid rgba(255,255,255,0.15);background:transparent;font-family:var(--f);font-size:13px;font-weight:700;color:inherit;padding:2px 0;outline:none;width:100%;min-height:26px}
 .ech-inp::placeholder{color:inherit;opacity:.4;font-weight:400}
 .ech-inp:focus{border-bottom-color:currentColor}
@@ -175,21 +227,85 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
 .ech.urgent{background:var(--rbg);border-color:var(--rb);color:var(--r)}
 .esel{border:1px solid currentColor;border-radius:5px;padding:4px 6px;font-size:11px;font-weight:600;font-family:var(--f);background:transparent;color:inherit;cursor:pointer;min-height:28px}
 .esel option{background:var(--card2);color:var(--t)}
-
-/* ── NOTES ── */
 .narea{padding:12px 16px}
 .narea textarea{width:100%;border:1px solid var(--b2);border-radius:9px;padding:10px 12px;font-family:var(--f);font-size:13px;background:var(--bg2);color:var(--t);outline:none;resize:vertical;min-height:72px;transition:border-color .12s}
 .narea textarea::placeholder{color:var(--tf)}
 .narea textarea:focus{border-color:var(--o)}
 .empty{padding:18px;text-align:center;font-size:12px;color:var(--tf)}
-
-/* ── TOOLBAR ── */
 .toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:12px}
 .breset{font-size:11px;color:var(--tf);background:none;border:1px solid var(--b2);border-radius:5px;padding:4px 10px;cursor:pointer;font-family:var(--m)}
 .breset:hover{color:var(--r);border-color:var(--rb)}
 </style>
 </head>
 <body>
+
+<!-- MODAL SCAN -->
+<div class="modal-bg" id="scan-modal">
+  <div class="modal">
+    <div class="modal-h">
+      <h2>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18" opacity=".4"/><rect x="6" y="6" width="4" height="4" rx="1" fill="currentColor" stroke="none"/></svg>
+        Scanner la carte grise
+      </h2>
+      <button class="modal-close" onclick="closeScan()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Zone drop/import -->
+      <div class="scan-drop" id="scan-drop">
+        <input type="file" id="scan-file" accept="image/*" onchange="onFileChosen(this)">
+        <div class="scan-drop-icon">🪪</div>
+        <p>Glissez une photo ou <b>cliquez pour importer</b></p>
+        <small>JPG, PNG, HEIC — la carte grise doit être lisible</small>
+      </div>
+
+      <!-- Bouton caméra -->
+      <button class="scan-cam-btn" onclick="openCamera()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Prendre une photo avec l'appareil photo
+      </button>
+      <!-- input caméra caché -->
+      <input type="file" id="cam-input" accept="image/*" capture="environment" style="display:none" onchange="onFileChosen(this)">
+
+      <!-- Aperçu image -->
+      <div class="scan-preview" id="scan-preview">
+        <img id="scan-img" src="" alt="Aperçu carte grise">
+        <div class="scan-preview-bar">
+          <span id="scan-img-name">—</span>
+          <button class="btn-rescan" onclick="resetScan()">↺ Changer</button>
+        </div>
+      </div>
+
+      <!-- Statut OCR -->
+      <div class="ocr-status" id="ocr-status">
+        <div class="ocr-spin" id="ocr-spin"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <span id="ocr-msg">Analyse en cours…</span>
+          <div class="ocr-progress"><div class="ocr-progress-bar" id="ocr-bar"></div></div>
+        </div>
+      </div>
+
+      <!-- Champs résultats éditables -->
+      <div class="ocr-fields" id="ocr-fields">
+        <div class="ocr-fields-title">Données extraites — vérifiez et corrigez si besoin</div>
+        <div class="ocr-grid">
+          <div class="ocr-field"><label>A — Immatriculation</label><input id="ocr-immat" placeholder="AB-123-CD"></div>
+          <div class="ocr-field"><label>B — Date 1ère MEC</label><input id="ocr-datemec" placeholder="JJ/MM/AAAA"></div>
+          <div class="ocr-field"><label>D.1 — Marque</label><input id="ocr-marque" placeholder="Peugeot"></div>
+          <div class="ocr-field"><label>D.3 — Version</label><input id="ocr-version" placeholder="ex: 1.5 BlueHDi"></div>
+          <div class="ocr-field"><label>P.2 — Puissance DIN (ch)</label><input id="ocr-pdin" placeholder="130"></div>
+          <div class="ocr-field"><label>P.6 — Puissance fiscale</label><input id="ocr-pf" placeholder="7"></div>
+        </div>
+        <div class="ocr-warn" id="ocr-warn" style="display:none"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel-modal" onclick="closeScan()">Annuler</button>
+      <button class="btn-apply" id="btn-apply" onclick="applyOCR()">✓ Appliquer</button>
+    </div>
+  </div>
+</div>
 
 <div class="hdr">
   <div class="hdr-logo">
@@ -213,7 +329,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
     <div class="sub2" id="vh-count">4 véhicules</div>
   </div>
   <span class="save-badge" id="sb">✓ Sauvegardé</span>
-  <span class="offline-badge" id="ob">hors ligne</span>
+  <span class="offline-badge" id="ob-badge">hors ligne</span>
 </div>
 
 <div class="tabs" id="tabs"></div>
@@ -223,11 +339,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh}
   <div id="zone-dyn"></div>
 </div>
 
+<!-- Tesseract.js (OCR local) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-window.addEventListener('online',  ()=>document.getElementById('ob').classList.remove('show'));
-window.addEventListener('offline', ()=>document.getElementById('ob').classList.add('show'));
-if(!navigator.onLine) document.getElementById('ob').classList.add('show');
+window.addEventListener('online',  ()=>document.getElementById('ob-badge').classList.remove('show'));
+window.addEventListener('offline', ()=>document.getElementById('ob-badge').classList.add('show'));
+if(!navigator.onLine) document.getElementById('ob-badge').classList.add('show');
 
 const COLORS=['#4a9fd4','#5db87a','#e07b4a','#c97fd4'];
 const CARBS=['Essence','Diesel','Hybride essence','Hybride diesel','Électrique','GPL','GNV'];
@@ -239,7 +357,6 @@ const TYPES=['Vidange huile','Révision générale','Contrôle technique','Rempl
   'Boîte de vitesse','Embrayage','Amortisseurs','Géométrie / parallélisme',
   'Éclairage','Pare-brise','Carrosserie','Autre'];
 
-/* ── Données de démo avec sous-lignes ── */
 const DEFAULTS=[
   {designation:'Peugeot 308 SW',immat:'AB-123-CD',date_mec:'2019-04-15',km:'87500',
    vin:'VF3LCBHZHJS123456',pf:'7',pdin:'130',cyl:'1499',places:'5',
@@ -248,88 +365,42 @@ const DEFAULTS=[
    assur:'2026-12-31',ct_date:'2025-11-15',ct_valid:'2027-11-15',notes:'',
    entretiens:[
      {date:'2024-09-12',km:'82000',type:'Vidange huile',garage:'Peugeot SA Metz',cout:'185',facture:'F-2024-089',notes:'Huile 5W40 Total',
-      lignes:[
-        {lib:'Vidange huile moteur',ref:'5W40 Total 5L',cout:'65'},
-        {lib:'Filtre à huile',ref:'OC 630',cout:'18'},
-        {lib:'Filtre à gasoil',ref:'KL 983',cout:'22'},
-        {lib:'Filtre habitacle',ref:'LAK 325',cout:'24'},
-        {lib:'Main d\'œuvre',ref:'',cout:'56'}
-      ]},
+      lignes:[{lib:'Vidange huile moteur',ref:'5W40 Total 5L',cout:'65'},{lib:'Filtre à huile',ref:'OC 630',cout:'18'},{lib:'Filtre à gasoil',ref:'KL 983',cout:'22'},{lib:'Filtre habitacle',ref:'LAK 325',cout:'24'},{lib:"Main d'œuvre",ref:'',cout:'56'}]},
      {date:'2024-03-05',km:'76000',type:'Remplacement pneus',garage:'Speedy Metz',cout:'460',facture:'F-2024-021',notes:'4 pneus Michelin Primacy 4',
-      lignes:[
-        {lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},
-        {lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},
-        {lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},
-        {lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},
-        {lib:'Équilibrage + montage (x4)',ref:'',cout:'80'}
-      ]}
+      lignes:[{lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},{lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},{lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},{lib:'Pneu Michelin Primacy 4 205/55R16',ref:'',cout:'95'},{lib:'Équilibrage + montage (x4)',ref:'',cout:'80'}]}
    ],
-   prochains:[
-     {type:'Courroie de distribution',km:'100000',date:'2025-06',prio:'urgent'},
-     {type:'Révision générale',km:'90000',date:'2025-09',prio:'soon'}
-   ]},
+   prochains:[{type:'Courroie de distribution',km:'100000',date:'2025-06',prio:'urgent'},{type:'Révision générale',km:'90000',date:'2025-09',prio:'soon'}]},
   {designation:'Renault Clio V',immat:'EF-456-GH',date_mec:'2021-02-08',km:'42300',
-   vin:'VF1RJA00065234567',pf:'6',pdin:'100',cyl:'999',places:'5',
-   carb:'Essence',boite:'Manuelle',couleur:'Blanc',marque:'Renault',modele:'Clio V',
-   version:'1.0 TCe 100',genre:'VP',ptac:'1490',proprio:'Société Dupont SAS',
-   assur:'2026-06-30',ct_date:'',ct_valid:'2027-03-20',notes:'',
+   vin:'VF1RJA00065234567',pf:'6',pdin:'100',cyl:'999',places:'5',carb:'Essence',boite:'Manuelle',couleur:'Blanc',marque:'Renault',modele:'Clio V',version:'1.0 TCe 100',genre:'VP',ptac:'1490',proprio:'Société Dupont SAS',assur:'2026-06-30',ct_date:'',ct_valid:'2027-03-20',notes:'',
    entretiens:[{date:'2024-11-20',km:'40000',type:'Révision générale',garage:'Renault Metz',cout:'320',facture:'F-2024-112',notes:'Révision 40 000 km',lignes:[]}],
    prochains:[{type:'Vidange huile',km:'50000',date:'2025-12',prio:'ok'}]},
   {designation:'Volkswagen Golf VIII',immat:'IJ-789-KL',date_mec:'2018-07-22',km:'118000',
-   vin:'WVWZZZ1KZ9M345678',pf:'9',pdin:'150',cyl:'1968',places:'5',
-   carb:'Diesel',boite:'Automatique',couleur:'Noir',marque:'Volkswagen',modele:'Golf VIII',
-   version:'2.0 TDI 150 DSG',genre:'VP',ptac:'1900',proprio:'Société Dupont SAS',
-   assur:'2026-09-15',ct_date:'2024-08-10',ct_valid:'2026-08-10',notes:'Véhicule de direction',
+   vin:'WVWZZZ1KZ9M345678',pf:'9',pdin:'150',cyl:'1968',places:'5',carb:'Diesel',boite:'Automatique',couleur:'Noir',marque:'Volkswagen',modele:'Golf VIII',version:'2.0 TDI 150 DSG',genre:'VP',ptac:'1900',proprio:'Société Dupont SAS',assur:'2026-09-15',ct_date:'2024-08-10',ct_valid:'2026-08-10',notes:'Véhicule de direction',
    entretiens:[
-     {date:'2024-07-15',km:'112000',type:'Freins (disques + plaquettes)',garage:'Midas Metz',cout:'380',facture:'F-2024-071',notes:'Disques + plaquettes AV',lignes:[
-       {lib:'Disque AV gauche',ref:'DF 4067',cout:'65'},
-       {lib:'Disque AV droit',ref:'DF 4067',cout:'65'},
-       {lib:'Plaquettes AV',ref:'LP 2477',cout:'48'},
-       {lib:'Main d\'œuvre',ref:'',cout:'202'}
-     ]},
+     {date:'2024-07-15',km:'112000',type:'Freins (disques + plaquettes)',garage:'Midas Metz',cout:'380',facture:'F-2024-071',notes:'Disques + plaquettes AV',lignes:[{lib:'Disque AV gauche',ref:'DF 4067',cout:'65'},{lib:'Disque AV droit',ref:'DF 4067',cout:'65'},{lib:'Plaquettes AV',ref:'LP 2477',cout:'48'},{lib:"Main d'œuvre",ref:'',cout:'202'}]},
      {date:'2024-01-22',km:'104000',type:'Vidange huile',garage:'Midas Metz',cout:'175',facture:'F-2024-008',notes:'Huile 5W30 Longlife',lignes:[]},
      {date:'2023-06-10',km:'96000',type:'Contrôle technique',garage:'Autovision Metz',cout:'80',facture:'F-2023-058',notes:'Contre-visite effectuée',lignes:[]}
    ],
-   prochains:[
-     {type:'Contrôle technique',km:'',date:'2026-08',prio:'urgent'},
-     {type:'Remplacement pneus',km:'120000',date:'2025-06',prio:'soon'}
-   ]},
+   prochains:[{type:'Contrôle technique',km:'',date:'2026-08',prio:'urgent'},{type:'Remplacement pneus',km:'120000',date:'2025-06',prio:'soon'}]},
   {designation:'Toyota Yaris Hybrid',immat:'MN-012-OP',date_mec:'2022-04-10',km:'28900',
-   vin:'VNKKD3D3XPA456789',pf:'5',pdin:'116',cyl:'1490',places:'5',
-   carb:'Hybride essence',boite:'CVT',couleur:'Bleu',marque:'Toyota',modele:'Yaris',
-   version:'Hybride 116h GR Sport',genre:'VP',ptac:'1440',proprio:'Société Dupont SAS',
-   assur:'2026-11-30',ct_date:'',ct_valid:'2028-04-10',notes:'',
+   vin:'VNKKD3D3XPA456789',pf:'5',pdin:'116',cyl:'1490',places:'5',carb:'Hybride essence',boite:'CVT',couleur:'Bleu',marque:'Toyota',modele:'Yaris',version:'Hybride 116h GR Sport',genre:'VP',ptac:'1440',proprio:'Société Dupont SAS',assur:'2026-11-30',ct_date:'',ct_valid:'2028-04-10',notes:'',
    entretiens:[{date:'2024-10-05',km:'25000',type:'Révision générale',garage:'Toyota Metz',cout:'290',facture:'F-2024-098',notes:'Révision 25 000 km',lignes:[]}],
    prochains:[{type:'Révision générale',km:'40000',date:'2026-06',prio:'ok'}]}
 ];
 
-const LS_KEY='carnet_entretien_v1';
-const LS_UI='carnet_ui_v1';
-
+const LS_KEY='carnet_entretien_v1', LS_UI='carnet_ui_v1';
 function loadData(){
-  try{ const r=localStorage.getItem(LS_KEY); if(r){
-    const d=JSON.parse(r);
-    // migration : ajouter lignes:[] si absent
-    d.forEach(v=>v.entretiens.forEach(e=>{ if(!e.lignes) e.lignes=[]; }));
-    return d;
-  }}catch(e){}
+  try{ const r=localStorage.getItem(LS_KEY); if(r){ const d=JSON.parse(r); d.forEach(v=>v.entretiens.forEach(e=>{if(!e.lignes)e.lignes=[];})); return d; }}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULTS));
 }
 function saveData(){
   try{
     localStorage.setItem(LS_KEY,JSON.stringify(VH));
-    const sb=document.getElementById('sb');
-    sb.classList.add('show');
-    clearTimeout(window._sbt);
-    window._sbt=setTimeout(()=>sb.classList.remove('show'),1800);
+    const sb=document.getElementById('sb'); sb.classList.add('show');
+    clearTimeout(window._sbt); window._sbt=setTimeout(()=>sb.classList.remove('show'),1800);
   }catch(e){}
 }
-function resetData(){
-  if(!confirm('Réinitialiser toutes les données ?')) return;
-  localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_UI);
-  location.reload();
-}
-
+function resetData(){ if(!confirm('Réinitialiser toutes les données ?')) return; localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_UI); location.reload(); }
 function loadUI(){ try{ return JSON.parse(localStorage.getItem(LS_UI)||'{}'); }catch(e){return {};} }
 function saveUI(k,v){ try{ const u=loadUI(); u[k]=v; localStorage.setItem(LS_UI,JSON.stringify(u)); }catch(e){} }
 
@@ -354,8 +425,7 @@ function renderTabs(){
   document.getElementById('vh-count').textContent=VH.length+' véhicule'+(VH.length>1?'s':'');
 }
 function updateTab(i){
-  const tabs=document.querySelectorAll('.tab');
-  if(!tabs[i]) return;
+  const tabs=document.querySelectorAll('.tab'); if(!tabs[i]) return;
   const nm=tabs[i].querySelector('.tname'), im=tabs[i].querySelector('.tim');
   if(nm) nm.textContent=VH[i].designation||'Véhicule '+(i+1);
   if(im) im.textContent=VH[i].immat||'—';
@@ -374,15 +444,13 @@ function upd(key,val){
 function togglePanel(){
   const panel=document.getElementById('icard-panel'), btn=document.getElementById('toggle-btn');
   const open=!panel.classList.contains('open');
-  panel.classList.toggle('open',open); btn.classList.toggle('open',open);
-  saveUI('panelOpen',open);
+  panel.classList.toggle('open',open); btn.classList.toggle('open',open); saveUI('panelOpen',open);
 }
 function toggleSec(id){
   const body=document.getElementById('sec-body-'+id), h=document.getElementById('sec-h-'+id);
   const open=!body.classList.contains('open');
   body.classList.toggle('open',open); h.classList.toggle('open',open);
-  const u=loadUI(); u.sections=u.sections||{}; u.sections[id]=open;
-  localStorage.setItem(LS_UI,JSON.stringify(u));
+  const u=loadUI(); u.sections=u.sections||{}; u.sections[id]=open; localStorage.setItem(LS_UI,JSON.stringify(u));
 }
 function secOpen(id){ const u=loadUI(); return u.sections&&u.sections[id]!==undefined?u.sections[id]:true; }
 function iSec(id,title,fields){
@@ -396,15 +464,12 @@ function iSec(id,title,fields){
 }
 function F(label,key,val,opts,mono,ph){
   const mc=mono?' mono-f':'', cb=`upd('${key}',this.value)`;
-  if(opts) return `<div class="if${mc}"><label>${label}</label>
-    <select onchange="${cb}">${opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
+  if(opts) return `<div class="if${mc}"><label>${label}</label><select onchange="${cb}">${opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
   const t=(key==='date_mec'||key==='assur'||key==='ct_date'||key==='ct_valid')?'date':'text';
-  return `<div class="if${mc}"><label>${label}</label>
-    <input type="${t}" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph||''}" oninput="${cb}"></div>`;
+  return `<div class="if${mc}"><label>${label}</label><input type="${t}" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph||''}" oninput="${cb}"></div>`;
 }
 function renderID(){
-  const v=VH[cur], color=COLORS[cur%COLORS.length];
-  const panelOpen=UI.panelOpen!==false;
+  const v=VH[cur], color=COLORS[cur%COLORS.length], panelOpen=UI.panelOpen!==false;
   document.getElementById('zone-id').innerHTML=`
   <div class="icard">
     <div class="icard-summary" onclick="togglePanel()">
@@ -417,7 +482,13 @@ function renderID(){
           ${v.carb?`<span class="imeta-pill">${v.carb}</span>`:''}
         </div>
       </div>
-      <button class="toggle-btn${panelOpen?' open':''}" id="toggle-btn" onclick="event.stopPropagation();togglePanel()">▾</button>
+      <div class="icard-actions">
+        <button class="scan-btn" onclick="event.stopPropagation();openScan()" title="Scanner la carte grise">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v6"/></svg>
+          Scanner CG
+        </button>
+        <button class="toggle-btn${panelOpen?' open':''}" id="toggle-btn" onclick="event.stopPropagation();togglePanel()">▾</button>
+      </div>
     </div>
     <div class="icard-panel${panelOpen?' open':''}" id="icard-panel">
       ${iSec('id','Identification & carte grise',
@@ -431,135 +502,266 @@ function renderID(){
         F('Genre (VP/VU…)','genre',v.genre,null,false,'VP')
       )}
       ${iSec('tech','Caractéristiques techniques',
-        F('Carburant','carb',v.carb,CARBS,false)+
-        F('Boîte de vitesse','boite',v.boite,BOITES,false)+
-        F('Couleur','couleur',v.couleur,COLS,false)+
-        F('Puissance fiscale (CV)','pf',v.pf,null,true,'ex: 7')+
-        F('Puissance DIN (ch)','pdin',v.pdin,null,true,'ex: 130')+
-        F('Cylindrée (cm³)','cyl',v.cyl,null,true,'ex: 1499')+
-        F('Nb de places','places',v.places,null,true,'5')+
-        F('PTAC (kg)','ptac',v.ptac,null,true,'ex: 1800')
+        F('Carburant','carb',v.carb,CARBS,false)+F('Boîte de vitesse','boite',v.boite,BOITES,false)+
+        F('Couleur','couleur',v.couleur,COLS,false)+F('Puissance fiscale (CV)','pf',v.pf,null,true,'ex: 7')+
+        F('Puissance DIN (ch)','pdin',v.pdin,null,true,'ex: 130')+F('Cylindrée (cm³)','cyl',v.cyl,null,true,'ex: 1499')+
+        F('Nb de places','places',v.places,null,true,'5')+F('PTAC (kg)','ptac',v.ptac,null,true,'ex: 1800')
       )}
       ${iSec('admin','Administratif & assurance',
-        F('Kilométrage actuel','km',v.km,null,true,'ex: 87500')+
-        F('Propriétaire / Titulaire','proprio',v.proprio,null,false,'Nom ou société')+
-        F('Assurance — échéance','assur',v.assur,null,false)+
-        F('Dernier CT','ct_date',v.ct_date,null,false)+
-        F('CT valable jusqu\'au','ct_valid',v.ct_valid,null,false)
+        F('Kilométrage actuel','km',v.km,null,true,'ex: 87500')+F('Propriétaire / Titulaire','proprio',v.proprio,null,false,'Nom ou société')+
+        F('Assurance — échéance','assur',v.assur,null,false)+F('Dernier CT','ct_date',v.ct_date,null,false)+
+        F("CT valable jusqu'au",'ct_valid',v.ct_valid,null,false)
       )}
     </div>
   </div>`;
-  if(UI.panelOpen===false){
-    document.getElementById('icard-panel').classList.remove('open');
-    document.getElementById('toggle-btn').classList.remove('open');
+  if(UI.panelOpen===false){ document.getElementById('icard-panel').classList.remove('open'); document.getElementById('toggle-btn').classList.remove('open'); }
+}
+
+/* ═══════════════════════════════════════════
+   SCAN / OCR
+═══════════════════════════════════════════ */
+let _scanFile=null;
+
+function openScan(){
+  resetScan();
+  document.getElementById('scan-modal').classList.add('open');
+}
+function closeScan(){ document.getElementById('scan-modal').classList.remove('open'); }
+
+function openCamera(){ document.getElementById('cam-input').click(); }
+
+function onFileChosen(input){
+  const file=input.files[0]; if(!file) return;
+  _scanFile=file;
+  // Aperçu
+  const url=URL.createObjectURL(file);
+  document.getElementById('scan-img').src=url;
+  document.getElementById('scan-img-name').textContent=file.name;
+  document.getElementById('scan-preview').classList.add('show');
+  document.getElementById('scan-drop').style.display='none';
+  document.querySelector('.scan-cam-btn').style.display='none';
+  // Lancer OCR
+  runOCR(file);
+}
+
+function resetScan(){
+  _scanFile=null;
+  document.getElementById('scan-file').value='';
+  document.getElementById('cam-input').value='';
+  document.getElementById('scan-preview').classList.remove('show');
+  document.getElementById('scan-drop').style.display='';
+  document.querySelector('.scan-cam-btn').style.display='';
+  setOcrStatus('hide');
+  document.getElementById('ocr-fields').classList.remove('show');
+  document.getElementById('btn-apply').classList.remove('show');
+  ['ocr-immat','ocr-datemec','ocr-marque','ocr-version','ocr-pdin','ocr-pf'].forEach(id=>{ document.getElementById(id).value=''; document.getElementById(id).classList.remove('filled'); });
+  document.getElementById('ocr-warn').style.display='none';
+}
+
+function setOcrStatus(state, msg, pct){
+  const el=document.getElementById('ocr-status');
+  const spin=document.getElementById('ocr-spin');
+  const msgEl=document.getElementById('ocr-msg');
+  const bar=document.getElementById('ocr-bar');
+  el.className='ocr-status';
+  if(state==='hide'){ return; }
+  el.classList.add('show',state);
+  if(msg) msgEl.textContent=msg;
+  if(pct!==undefined) bar.style.width=pct+'%';
+  spin.style.display=(state==='running')?'block':'none';
+}
+
+/* ── OCR Tesseract ── */
+async function runOCR(file){
+  setOcrStatus('running','Chargement du moteur OCR…',5);
+  try {
+    const worker = await Tesseract.createWorker('fra+eng', 1, {
+      logger: m => {
+        if(m.status==='loading tesseract core') setOcrStatus('running','Chargement du moteur…', 10);
+        if(m.status==='loading language traineddata') setOcrStatus('running','Chargement du dictionnaire…', 30);
+        if(m.status==='initialized api') setOcrStatus('running','Prêt, analyse en cours…', 50);
+        if(m.status==='recognizing text') setOcrStatus('running','Reconnaissance du texte…', 50+Math.round((m.progress||0)*45));
+      }
+    });
+    setOcrStatus('running','Analyse de l\'image…', 55);
+    const { data: { text } } = await worker.recognize(file);
+    await worker.terminate();
+    setOcrStatus('done','Analyse terminée ✓', 100);
+    parseCarteGrise(text);
+  } catch(err) {
+    setOcrStatus('err','Erreur OCR : '+err.message);
+    console.error(err);
   }
 }
 
-/* ── Rendu sous-lignes ── */
-function subTotal(lignes){ return lignes.reduce((s,l)=>s+(parseFloat(l.cout)||0),0); }
+/* ── Parseur carte grise française ── */
+function parseCarteGrise(raw){
+  const txt = raw.toUpperCase().replace(/[^\w\d\s\/\-\.]/g,' ').replace(/\s+/g,' ');
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
 
-function renderSublines(si, lignes){
-  if(!lignes||lignes.length===0) return `
-    <div class="subrow-inner">
-      <p style="font-size:11px;color:var(--tf);margin-bottom:6px">Aucun détail. Cliquez pour ajouter des lignes.</p>
-      <div class="subrow-footer">
-        <button class="sub-add-btn" onclick="addSubline(${si})">+ Ajouter une ligne</button>
-      </div>
-    </div>`;
-  const total=subTotal(lignes);
-  const linesHtml=`
-    <div class="subline-header">
-      <span>Désignation</span><span>Référence</span><span>Coût €</span><span></span>
-    </div>
-    <div class="sublines-wrap" id="sublines-${si}">
-    ${lignes.map((l,li)=>`
-      <div class="subline">
-        <input type="text" value="${(l.lib||'').replace(/"/g,'&quot;')}" placeholder="Désignation…" oninput="updSub(${si},${li},'lib',this.value)">
-        <input class="si-ref" type="text" value="${(l.ref||'').replace(/"/g,'&quot;')}" placeholder="Réf." oninput="updSub(${si},${li},'ref',this.value)">
-        <input class="si-cout mono-ti" type="text" value="${l.cout||''}" placeholder="0" oninput="updSub(${si},${li},'cout',this.value)">
-        <button class="bdel-sub" onclick="delSubline(${si},${li})">✕</button>
-      </div>`).join('')}
-    </div>`;
-  return `<div class="subrow-inner">
-    ${linesHtml}
-    <div class="subrow-footer">
-      <button class="sub-add-btn" onclick="addSubline(${si})">+ Ajouter une ligne</button>
-      <span class="sub-total">Total détail : <b>${total.toLocaleString('fr-FR')} €</b></span>
-    </div>
-  </div>`;
+  function matchLabel(labels, pattern){
+    for(const line of lines){
+      const up=line.toUpperCase();
+      for(const lbl of labels){
+        if(up.includes(lbl)){
+          const after = line.substring(up.indexOf(lbl)+lbl.length).trim();
+          const m = after.match(pattern);
+          if(m) return m[0].trim();
+        }
+      }
+    }
+    return '';
+  }
+
+  // A — Immatriculation (format SIV AA-111-AA ou ancien 1234 AB 75)
+  let immat = '';
+  const sivMatch = txt.match(/\b([A-Z]{2}[\s\-]?\d{3}[\s\-]?[A-Z]{2})\b/);
+  const oldMatch = txt.match(/\b(\d{1,4}[\s]?[A-Z]{1,3}[\s]?\d{2,3})\b/);
+  if(sivMatch) immat = sivMatch[1].replace(/\s/g,'-').toUpperCase();
+  else if(oldMatch) immat = oldMatch[1].replace(/\s/g,' ').toUpperCase();
+
+  // B — Date 1ère MEC JJ/MM/AAAA
+  let dateMec = '';
+  const dateMatch = txt.match(/\b(\d{2}[\/\.\-]\d{2}[\/\.\-]\d{4})\b/);
+  if(dateMatch) dateMec = dateMatch[1].replace(/[.\-]/g,'/');
+
+  // D.1 — Marque
+  let marque = matchLabel(['D.1','D1','MARQUE'], /[A-Za-z]{2,20}/);
+  if(!marque){
+    const marquesConnues=['PEUGEOT','RENAULT','CITROEN','VOLKSWAGEN','FORD','TOYOTA','BMW','MERCEDES','AUDI','OPEL','FIAT','NISSAN','HONDA','HYUNDAI','KIA','SEAT','SKODA','VOLVO','DACIA','ALFA'];
+    for(const m of marquesConnues){ if(txt.includes(m)){ marque=m.charAt(0)+m.slice(1).toLowerCase(); break; } }
+  }
+
+  // D.3 — Version / dénomination commerciale
+  let version = matchLabel(['D.3','D3','VERSION','DENOMINATION'], /[ws.]{3,30}/);
+
+  // P.2 — Puissance nette (kW → ch)
+  let pdin = '';
+  const kwMatch = txt.match(/P\.?\s*2[\s:]*(\d{2,3})/i) || txt.match(/(\d{2,3})\s*KW/i);
+  if(kwMatch){ const kw=parseInt(kwMatch[1]); pdin=Math.round(kw*1.36)+''; }
+
+  // P.6 — Puissance administrative / fiscale
+  let pf = '';
+  const pfMatch = txt.match(/P\.?\s*6[\s:]*(\d{1,3})/i) || txt.match(/(\d{1,2})\s*CV/i);
+  if(pfMatch) pf = pfMatch[1];
+
+  // Remplir les champs
+  const fill=(id,val)=>{
+    const el=document.getElementById(id);
+    el.value=val||'';
+    el.classList.toggle('filled',!!(val));
+  };
+  fill('ocr-immat', immat);
+  fill('ocr-datemec', dateMec);
+  fill('ocr-marque', marque);
+  fill('ocr-version', version);
+  fill('ocr-pdin', pdin);
+  fill('ocr-pf', pf);
+
+  // Avertissement si peu de champs remplis
+  const found=[immat,dateMec,marque,version,pdin,pf].filter(Boolean).length;
+  const warnEl=document.getElementById('ocr-warn');
+  if(found<2){
+    warnEl.textContent='⚠ Peu de données extraites. Vérifiez que la photo est nette, bien cadrée et lisible, puis corrigez manuellement les champs vides.';
+    warnEl.style.display='block';
+  } else { warnEl.style.display='none'; }
+
+  document.getElementById('ocr-fields').classList.add('show');
+  document.getElementById('btn-apply').classList.add('show');
 }
+
+/* ── Appliquer les données au véhicule courant ── */
+function applyOCR(){
+  const immat  = document.getElementById('ocr-immat').value.trim();
+  const dateMec= document.getElementById('ocr-datemec').value.trim();
+  const marque = document.getElementById('ocr-marque').value.trim();
+  const version= document.getElementById('ocr-version').value.trim();
+  const pdin   = document.getElementById('ocr-pdin').value.trim();
+  const pf     = document.getElementById('ocr-pf').value.trim();
+
+  // Convertir date JJ/MM/AAAA → AAAA-MM-JJ pour le champ date HTML
+  function toISO(d){
+    if(!d) return '';
+    const p=d.split(/[\/\-\.]/);
+    if(p.length===3&&p[2].length===4) return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+    return '';
+  }
+
+  if(immat)   { VH[cur].immat=immat; updateTab(cur); }
+  if(dateMec) { VH[cur].date_mec=toISO(dateMec)||VH[cur].date_mec; }
+  if(marque)  { VH[cur].marque=marque; if(!VH[cur].designation||VH[cur].designation==='Nouveau véhicule') VH[cur].designation=marque+(version?' '+version:''); }
+  if(version) { VH[cur].version=version; }
+  if(pdin)    { VH[cur].pdin=pdin; }
+  if(pf)      { VH[cur].pf=pf; }
+
+  saveData();
+  closeScan();
+  renderID();
+  renderDyn();
+}
+
+/* ── Drag & drop ── */
+const dropZone=document.getElementById('scan-drop');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const file=e.dataTransfer.files[0];
+  if(file&&file.type.startsWith('image/')){ _scanFile=file; const dt=new DataTransfer(); dt.items.add(file); document.getElementById('scan-file').files=dt.files; onFileChosen(document.getElementById('scan-file')); }
+});
 
 /* ── renderDyn ── */
 function renderDyn(){
-  const v=VH[cur];
-  const total=tot(v);
-  const sorted=getSorted();
-  const last=sorted[0]||null;
+  const v=VH[cur], total=tot(v), sorted=getSorted(), last=sorted[0]||null;
   const ctExp=v.ct_valid&&new Date(v.ct_valid)<new Date();
   const ctC=!v.ct_valid?'':ctExp?'ct-ko':'ct-ok';
-
   let rowsHtml='';
-  if(sorted.length===0){
-    rowsHtml=`<tr><td colspan="9" class="empty">Aucune intervention enregistrée.</td></tr>`;
-  } else {
+  if(sorted.length===0){ rowsHtml=`<tr><td colspan="9" class="empty">Aucune intervention enregistrée.</td></tr>`; }
+  else {
     sorted.forEach((e,si)=>{
       const hasLines=e.lignes&&e.lignes.length>0;
-      const isOpen=document.getElementById('sub-'+si)?.classList.contains('open')||false;
-      const btnLabel=hasLines?`▸ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`: '▸ Détail';
+      const btnLabel=hasLines?`▸ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`:'▸ Détail';
       rowsHtml+=`<tr class="main-row">
         <td><input class="ti" type="date" value="${e.date||''}" onchange="updE(${si},'date',this.value)"></td>
-        <td><input class="ti mono-ti" type="text" value="${e.km||''}" placeholder="km" style="width:72px" oninput="updE(${si},'km',this.value)"></td>
+        <td><input class="ti mono-ti" style="width:72px" type="text" value="${e.km||''}" placeholder="km" oninput="updE(${si},'km',this.value)"></td>
         <td style="white-space:nowrap">
           <select class="ti-sel" onchange="onTypeChgE(this,${si})">${TYPES.map(t=>`<option${(TYPES.slice(0,-1).includes(e.type)?e.type===t:t==='Autre')?' selected':''}>${t}</option>`).join('')}</select>
           <input class="ti" type="text" placeholder="Préciser…" style="display:${TYPES.slice(0,-1).includes(e.type)?'none':'inline'};width:100px;font-size:11px;margin-left:4px" value="${TYPES.slice(0,-1).includes(e.type)?'':e.type}" oninput="updE(${si},'type',this.value)">
         </td>
         <td><input class="ti" type="text" value="${(e.garage||'').replace(/"/g,'&quot;')}" placeholder="Garage" oninput="updE(${si},'garage',this.value)"></td>
-        <td><input class="ti mono-ti" type="text" value="${e.cout||''}" placeholder="€" style="width:58px" oninput="updE(${si},'cout',this.value)"></td>
-        <td><input class="ti mono-ti" type="text" value="${(e.facture||'').replace(/"/g,'&quot;')}" placeholder="N° fact." style="width:80px" oninput="updE(${si},'facture',this.value)"></td>
+        <td><input class="ti mono-ti" style="width:58px" type="text" value="${e.cout||''}" placeholder="€" oninput="updE(${si},'cout',this.value)"></td>
+        <td><input class="ti mono-ti" style="width:80px" type="text" value="${(e.facture||'').replace(/"/g,'&quot;')}" placeholder="N° fact." oninput="updE(${si},'facture',this.value)"></td>
         <td><input class="ti" type="text" value="${(e.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="updE(${si},'notes',this.value)"></td>
         <td><button class="expand-btn${hasLines?' has-items':''}" id="expand-btn-${si}" onclick="toggleSub(${si})">${btnLabel}</button></td>
         <td><button class="bdel" onclick="delE(${si})">✕</button></td>
       </tr>
-      <tr class="subrow" id="sub-${si}">
-        <td colspan="9">${renderSublines(si, e.lignes||[])}</td>
-      </tr>`;
+      <tr class="subrow" id="sub-${si}"><td colspan="9">${renderSublines(si,e.lignes||[])}</td></tr>`;
     });
   }
-
-  const echs=v.prochains.length===0
-    ?`<p class="empty">Aucune échéance planifiée.</p>`
-    :v.prochains.map((p,i)=>`
-      <div class="ech ${p.prio}">
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-          <input class="ech-inp" type="text" value="${(p.type||'').replace(/"/g,'&quot;')}" placeholder="Type d'intervention" oninput="updP(${i},'type',this.value)">
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input class="ech-inp mono-ti" type="text" value="${p.km||''}" placeholder="km prévu" style="width:90px" oninput="updP(${i},'km',this.value)">
-            <input class="ech-inp mono-ti" type="text" value="${p.date||''}" placeholder="2026-06" style="width:80px" oninput="updP(${i},'date',this.value)">
-          </div>
+  const echs=v.prochains.length===0?`<p class="empty">Aucune échéance planifiée.</p>`:v.prochains.map((p,i)=>`
+    <div class="ech ${p.prio}">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+        <input class="ech-inp" type="text" value="${(p.type||'').replace(/"/g,'&quot;')}" placeholder="Type d'intervention" oninput="updP(${i},'type',this.value)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input class="ech-inp mono-ti" type="text" value="${p.km||''}" placeholder="km prévu" style="width:90px" oninput="updP(${i},'km',this.value)">
+          <input class="ech-inp mono-ti" type="text" value="${p.date||''}" placeholder="2026-06" style="width:80px" oninput="updP(${i},'date',this.value)">
         </div>
-        <select class="esel" onchange="setPrio(${i},this.value)">
-          <option value="ok"${p.prio==='ok'?' selected':''}>✓ OK</option>
-          <option value="soon"${p.prio==='soon'?' selected':''}>⏳ Bientôt</option>
-          <option value="urgent"${p.prio==='urgent'?' selected':''}>⚠ Urgent</option>
-        </select>
-        <button class="bdel" onclick="delP(${i})">✕</button>
-      </div>`).join('');
+      </div>
+      <select class="esel" onchange="setPrio(${i},this.value)">
+        <option value="ok"${p.prio==='ok'?' selected':''}>✓ OK</option>
+        <option value="soon"${p.prio==='soon'?' selected':''}>⏳ Bientôt</option>
+        <option value="urgent"${p.prio==='urgent'?' selected':''}>⚠ Urgent</option>
+      </select>
+      <button class="bdel" onclick="delP(${i})">✕</button>
+    </div>`).join('');
 
   document.getElementById('zone-dyn').innerHTML=`
   <div class="stats">
-    <div class="sc"><div class="sl">Kilométrage</div>
-      <div class="sv">${v.km?fk(v.km):'—'}<span class="su">km</span></div>
-      <div class="ss">${last?'Dernier: '+fd(last.date):'—'}</div></div>
-    <div class="sc"><div class="sl">Interventions</div>
-      <div class="sv">${v.entretiens.length}</div><div class="ss">enregistrées</div></div>
-    <div class="sc"><div class="sl">Dépenses totales</div>
-      <div class="sv">${Math.round(total).toLocaleString('fr-FR')}<span class="su">€</span></div>
-      <div class="ss">toutes interventions</div></div>
-    <div class="sc"><div class="sl">CT valable jusqu'au</div>
-      <div class="sv ${ctC}" style="font-size:14px;margin-top:3px">${v.ct_valid?fd(v.ct_valid):'—'}</div>
-      <div class="ss">${ctExp?'⚠ Dépassé':v.ct_valid?'✓ Valide':''}</div></div>
+    <div class="sc"><div class="sl">Kilométrage</div><div class="sv">${v.km?fk(v.km):'—'}<span class="su">km</span></div><div class="ss">${last?'Dernier: '+fd(last.date):'—'}</div></div>
+    <div class="sc"><div class="sl">Interventions</div><div class="sv">${v.entretiens.length}</div><div class="ss">enregistrées</div></div>
+    <div class="sc"><div class="sl">Dépenses totales</div><div class="sv">${Math.round(total).toLocaleString('fr-FR')}<span class="su">€</span></div><div class="ss">toutes interventions</div></div>
+    <div class="sc"><div class="sl">CT valable jusqu'au</div><div class="sv ${ctC}" style="font-size:14px;margin-top:3px">${v.ct_valid?fd(v.ct_valid):'—'}</div><div class="ss">${ctExp?'⚠ Dépassé':v.ct_valid?'✓ Valide':''}</div></div>
   </div>
-
   <div class="sec">
     <div class="sec-h">
       <h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historique des interventions</h3>
@@ -584,141 +786,86 @@ function renderDyn(){
         <div class="ff"><label>N° de facture</label><input id="ff2" placeholder="ex: F-2025-001"></div>
       </div>
       <div class="ff"><label>Notes</label><textarea id="fn" placeholder="Pièces, références, observations..."></textarea></div>
-      <div class="fac">
-        <button class="bsave" onclick="saveE()">Enregistrer</button>
-        <button class="bcancel" onclick="toggleAdd()">Annuler</button>
-      </div>
+      <div class="fac"><button class="bsave" onclick="saveE()">Enregistrer</button><button class="bcancel" onclick="toggleAdd()">Annuler</button></div>
     </div>
   </div>
-
   <div class="sec">
-    <div class="sec-h">
-      <h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Prochaines échéances</h3>
-      <button class="btn-add" onclick="addP()">+ Ajouter</button>
-    </div>
+    <div class="sec-h"><h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Prochaines échéances</h3>
+      <button class="btn-add" onclick="addP()">+ Ajouter</button></div>
     <div class="echl">${echs}</div>
   </div>
-
   <div class="sec">
-    <div class="sec-h">
-      <h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Notes générales</h3>
-    </div>
-    <div class="narea">
-      <textarea placeholder="Observations, historique, accidents, modifications..." oninput="upd('notes',this.value)">${v.notes||''}</textarea>
-    </div>
+    <div class="sec-h"><h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Notes générales</h3></div>
+    <div class="narea"><textarea placeholder="Observations, historique, accidents, modifications..." oninput="upd('notes',this.value)">${v.notes||''}</textarea></div>
   </div>`;
 }
 
-/* ── Toggle sous-ligne ── */
+/* ── Sous-lignes ── */
+function subTotal(l){ return l.reduce((s,x)=>s+(parseFloat(x.cout)||0),0); }
+function renderSublines(si,lignes){
+  if(!lignes||lignes.length===0) return `<div class="subrow-inner"><p style="font-size:11px;color:var(--tf);margin-bottom:6px">Aucun détail. Ajoutez des lignes ci-dessous.</p><div class="subrow-footer"><button class="sub-add-btn" onclick="addSubline(${si})">+ Ajouter une ligne</button></div></div>`;
+  const total=subTotal(lignes);
+  return `<div class="subrow-inner">
+    <div class="subline-header"><span>Désignation</span><span>Référence</span><span>Coût €</span><span></span></div>
+    ${lignes.map((l,li)=>`<div class="subline">
+      <input type="text" value="${(l.lib||'').replace(/"/g,'&quot;')}" placeholder="Désignation…" oninput="updSub(${si},${li},'lib',this.value)">
+      <input class="si-ref" type="text" value="${(l.ref||'').replace(/"/g,'&quot;')}" placeholder="Réf." oninput="updSub(${si},${li},'ref',this.value)">
+      <input class="si-cout mono-ti" type="text" value="${l.cout||''}" placeholder="0" oninput="updSub(${si},${li},'cout',this.value)">
+      <button class="bdel-sub" onclick="delSubline(${si},${li})">✕</button>
+    </div>`).join('')}
+    <div class="subrow-footer">
+      <button class="sub-add-btn" onclick="addSubline(${si})">+ Ajouter une ligne</button>
+      <span class="sub-total">Total : <b>${total.toLocaleString('fr-FR')} €</b></span>
+    </div>
+  </div>`;
+}
 function toggleSub(si){
-  const row=document.getElementById('sub-'+si);
-  const btn=document.getElementById('expand-btn-'+si);
+  const row=document.getElementById('sub-'+si), btn=document.getElementById('expand-btn-'+si);
   if(!row) return;
-  const open=!row.classList.contains('open');
-  row.classList.toggle('open',open);
-  const e=getSorted()[si];
-  const hasLines=e.lignes&&e.lignes.length>0;
-  btn.textContent=open
-    ?(hasLines?`▾ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`: '▾ Détail')
-    :(hasLines?`▸ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`: '▸ Détail');
+  const open=!row.classList.contains('open'); row.classList.toggle('open',open);
+  const e=getSorted()[si], hasLines=e.lignes&&e.lignes.length>0;
+  btn.textContent=open?(hasLines?`▾ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`:'▾ Détail'):(hasLines?`▸ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`:'▸ Détail');
 }
-
-/* ── Sous-lignes CRUD ── */
-function getRealEntry(si){
-  const sorted=getSorted();
-  const ri=realIdx(sorted,si);
-  return VH[cur].entretiens[ri];
-}
+function getRealEntry(si){ const s=getSorted(); return VH[cur].entretiens[realIdx(s,si)]; }
 function addSubline(si){
-  const e=getRealEntry(si);
-  if(!e.lignes) e.lignes=[];
+  const e=getRealEntry(si); if(!e.lignes) e.lignes=[];
   e.lignes.push({lib:'',ref:'',cout:''});
   saveData();
-  // Re-render juste le contenu de la sous-ligne sans tout re-render
-  const cell=document.querySelector(`#sub-${si} td`);
-  if(cell){ cell.innerHTML=renderSublines(si,e.lignes); }
-  const row=document.getElementById('sub-'+si);
-  if(row&&!row.classList.contains('open')) row.classList.add('open');
+  const cell=document.querySelector(`#sub-${si} td`); if(cell) cell.innerHTML=renderSublines(si,e.lignes);
+  const row=document.getElementById('sub-'+si); if(row&&!row.classList.contains('open')) row.classList.add('open');
   const btn=document.getElementById('expand-btn-'+si);
   if(btn){ btn.classList.add('has-items'); btn.textContent=`▾ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`; }
 }
 function updSub(si,li,field,val){
-  const e=getRealEntry(si);
-  if(e.lignes&&e.lignes[li]) e.lignes[li][field]=val;
-  saveData();
-  // Mettre à jour le total sans re-render
-  const totalEl=document.querySelector(`#sub-${si} .sub-total b`);
-  if(totalEl) totalEl.textContent=subTotal(e.lignes).toLocaleString('fr-FR')+' €';
+  const e=getRealEntry(si); if(e.lignes&&e.lignes[li]) e.lignes[li][field]=val; saveData();
+  const totalEl=document.querySelector(`#sub-${si} .sub-total b`); if(totalEl) totalEl.textContent=subTotal(e.lignes).toLocaleString('fr-FR')+' €';
 }
 function delSubline(si,li){
-  const e=getRealEntry(si);
-  e.lignes.splice(li,1);
-  saveData();
-  const cell=document.querySelector(`#sub-${si} td`);
-  if(cell){ cell.innerHTML=renderSublines(si,e.lignes); }
-  // Mise à jour bouton expand
+  const e=getRealEntry(si); e.lignes.splice(li,1); saveData();
+  const cell=document.querySelector(`#sub-${si} td`); if(cell) cell.innerHTML=renderSublines(si,e.lignes);
   const btn=document.getElementById('expand-btn-'+si);
-  if(btn){
-    if(e.lignes.length>0){
-      btn.classList.add('has-items');
-      btn.textContent=`▾ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`;
-    } else {
-      btn.classList.remove('has-items');
-      btn.textContent='▸ Détail';
-    }
-  }
+  if(btn){ if(e.lignes.length>0){ btn.classList.add('has-items'); btn.textContent=`▾ ${e.lignes.length} ligne${e.lignes.length>1?'s':''}`; } else { btn.classList.remove('has-items'); btn.textContent='▸ Détail'; } }
 }
 
-/* ── Interventions CRUD ── */
-function toggleAdd(){
-  adding=!adding; renderDyn();
-  if(adding) setTimeout(()=>document.getElementById('af').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
-}
+/* ── Interventions ── */
+function toggleAdd(){ adding=!adding; renderDyn(); if(adding) setTimeout(()=>document.getElementById('af').scrollIntoView({behavior:'smooth',block:'nearest'}),50); }
 function saveE(){
   const date=document.getElementById('fd').value; if(!date) return;
-  VH[cur].entretiens.push({
-    date, km:document.getElementById('fkm').value,
-    type:(document.getElementById('ft').value==='Autre'&&document.getElementById('ft-autre').style.display!=='none'
-      ?document.getElementById('ft-autre').value||'Autre'
-      :document.getElementById('ft').value),
-    garage:document.getElementById('fg2').value,
-    cout:document.getElementById('fc').value,
-    facture:document.getElementById('ff2').value,
-    notes:document.getElementById('fn').value,
-    lignes:[]
-  });
+  VH[cur].entretiens.push({date,km:document.getElementById('fkm').value,
+    type:(document.getElementById('ft').value==='Autre'&&document.getElementById('ft-autre').style.display!=='none'?document.getElementById('ft-autre').value||'Autre':document.getElementById('ft').value),
+    garage:document.getElementById('fg2').value,cout:document.getElementById('fc').value,
+    facture:document.getElementById('ff2').value,notes:document.getElementById('fn').value,lignes:[]});
   adding=false; saveData(); renderDyn();
 }
-function delE(si){
-  if(!confirm('Supprimer cette intervention ?')) return;
-  const s=getSorted(), ri=realIdx(s,si);
-  VH[cur].entretiens.splice(ri,1); saveData(); renderDyn();
-}
-function updE(si,field,val){
-  const s=getSorted(), ri=realIdx(s,si);
-  if(ri>=0){ VH[cur].entretiens[ri][field]=val; saveData(); }
-}
-function onTypeChgE(sel,si){
-  const inp=sel.nextElementSibling;
-  if(sel.value==='Autre'){ inp.style.display='inline'; inp.focus(); updE(si,'type',inp.value||'Autre'); }
-  else{ inp.style.display='none'; updE(si,'type',sel.value); }
-}
-function onTypeChgForm(sel){
-  const inp=document.getElementById('ft-autre');
-  if(sel.value==='Autre'){ inp.style.display='block'; inp.focus(); }
-  else{ inp.style.display='none'; }
-}
-function addP(){
-  const type=prompt("Type d'intervention :"); if(!type) return;
-  const km=prompt("Kilométrage prévu (vide si N/A) :")||'';
-  const date=prompt("Date prévue (ex: 2026-08) :")||'';
-  VH[cur].prochains.push({type,km,date,prio:'ok'}); saveData(); renderDyn();
-}
+function delE(si){ if(!confirm('Supprimer cette intervention ?')) return; const s=getSorted(); VH[cur].entretiens.splice(realIdx(s,si),1); saveData(); renderDyn(); }
+function updE(si,field,val){ const s=getSorted(),ri=realIdx(s,si); if(ri>=0){ VH[cur].entretiens[ri][field]=val; saveData(); } }
+function onTypeChgE(sel,si){ const inp=sel.nextElementSibling; if(sel.value==='Autre'){ inp.style.display='inline'; inp.focus(); updE(si,'type',inp.value||'Autre'); } else { inp.style.display='none'; updE(si,'type',sel.value); } }
+function onTypeChgForm(sel){ const inp=document.getElementById('ft-autre'); if(sel.value==='Autre'){ inp.style.display='block'; inp.focus(); } else inp.style.display='none'; }
+function addP(){ const type=prompt("Type d'intervention :"); if(!type) return; const km=prompt("Kilométrage prévu :")||'', date=prompt("Date prévue (ex: 2026-08) :")||''; VH[cur].prochains.push({type,km,date,prio:'ok'}); saveData(); renderDyn(); }
 function updP(i,field,val){ VH[cur].prochains[i][field]=val; saveData(); }
 function setPrio(i,val){ VH[cur].prochains[i].prio=val; saveData(); renderDyn(); }
 function delP(i){ VH[cur].prochains.splice(i,1); saveData(); renderDyn(); }
 
-/* ── Init ── */
 renderTabs(); renderID(); renderDyn();
 </script>
 </body>
